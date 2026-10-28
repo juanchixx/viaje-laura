@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="El itinerario de Laura por Europa, del 25 de noviembre de 2026 al 6 de enero de 2027.">
+<meta name="theme-color" content="#191c2c">
+<title>El viaje de Laura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: póster ferroviario de invierno. Cada parada es una escena de capas vectoriales con parallax y debajo un "boleto" con datos. */
+:root{
+  --paper:#eceef3; --card:#ffffff; --ink:#191c2c; --muted:#5a5f74; --line:#d3d7e1;
+  --accent:#c8323c; --accent-ink:#ffffff; --now:#1f7a52;
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --body:"Literata",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0f111a; --card:#181b28; --ink:#e8e9f0; --muted:#9a9fb4; --line:#2b2f42;
+  --accent:#ff6a72; --accent-ink:#1a0d0f; --now:#4fd39a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f111a; --card:#181b28; --ink:#e8e9f0; --muted:#9a9fb4; --line:#2b2f42;
+  --accent:#ff6a72; --accent-ink:#1a0d0f; --now:#4fd39a; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--ink)}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* Barra superior */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--ink);color:var(--paper)}
+.bar-in{display:flex;align-items:center;gap:12px;padding-block:10px;max-width:1100px;margin:0 auto}
+.bar-txt{flex:1;min-width:0}
+.bar-label{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+.bar-main{font-family:var(--display);font-weight:800;font-size:24px;line-height:1.05;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-sub{font-family:var(--mono);font-size:12px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cd{display:inline-flex;gap:10px;font-variant-numeric:tabular-nums}
+.cd span{display:inline-flex;align-items:baseline;gap:2px}
+.cd i{font-family:var(--mono);font-style:normal;font-size:11px;font-weight:400;opacity:.7}
+.bar-btn{flex:none;font-family:var(--mono);font-size:12px;font-weight:600;text-decoration:none;background:var(--accent);color:var(--accent-ink);padding:9px 12px;border-radius:4px;border:0;cursor:pointer}
+.bar-prog{height:3px;background:color-mix(in srgb,var(--paper) 18%,transparent)}
+.bar-prog span{display:block;height:100%;width:0;background:var(--accent);transition:width .6s}
+
+/* Portada */
+.hero{padding-block:36px 28px;max-width:1100px;margin:0 auto}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0}
+.hero h1{font-family:var(--display);font-weight:900;font-size:clamp(56px,17vw,148px);line-height:.86;letter-spacing:-.01em;text-transform:uppercase;margin:8px 0 14px;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero .lead{font-size:18px;max-width:34ch;margin:0 0 18px;color:var(--muted)}
+.stats{display:flex;flex-wrap:wrap;gap:8px 22px;margin:0 0 26px;font-family:var(--mono);font-size:13px}
+.stats b{font-family:var(--display);font-size:30px;font-weight:800;display:block;line-height:1}
+.route{list-style:none;margin:0;padding:0;border-top:2px solid var(--ink)}
+.route li{border-bottom:1px solid var(--line)}
+.route a{display:grid;grid-template-columns:5.6em 1fr auto;gap:10px;align-items:baseline;padding:10px 2px;text-decoration:none}
+.route a:hover .rc{color:var(--accent)}
+.rd{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.rc{font-family:var(--display);font-weight:800;font-size:22px;line-height:1.1;text-transform:uppercase;min-width:0}
+.rk{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right}
+.route li.is-now a{background:color-mix(in srgb,var(--now) 14%,transparent)}
+.route li.is-now .rk{color:var(--now);font-weight:600}
+.route li.is-past .rc{opacity:.5}
+@media (min-width:760px){.route{columns:2;column-gap:40px;border-top:0}.route li{break-inside:avoid}}
+
+/* Escenas */
+.stop{position:relative}
+.scene{position:relative;height:clamp(440px,70svh,760px);overflow:hidden;
+  background:linear-gradient(180deg,var(--s1) 0%,var(--s2) 78%);
+  --water:color-mix(in srgb,var(--near) 72%,var(--s1));
+  --back:color-mix(in srgb,var(--far) 52%,var(--s2));
+  --fr:color-mix(in srgb,var(--mid) 72%,var(--near));
+  --snow:#eef2f8; --tree:var(--mid); --sun:color-mix(in srgb,var(--lit) 70%,#fff)}
+.ly{position:absolute;left:0;width:100%;will-change:transform;pointer-events:none}
+.ly svg{display:block;width:100%;height:100%}
+.ly-cel{top:-12%;height:100%}
+.ly-far{bottom:-14%;height:68%}
+.ly-lm{bottom:8%;height:74%;left:-12%;width:124%}
+@media (min-width:700px){.ly-lm{left:0;width:100%}}
+.ly-near{bottom:-6%;height:26%}
+.far{fill:var(--far)} .far .back{fill:var(--back)} .far .snowc{fill:var(--snow)} .cloud{fill:#fff;opacity:.9}
+.lm{fill:var(--mid)} .lm .fr{fill:var(--fr)} .lm .lit{fill:var(--lit)} .str{fill:none;stroke:var(--mid)}
+.near{fill:var(--near)} .near .water{fill:var(--water)} .near .refl{fill:var(--lit);opacity:.42} .near .snow{fill:var(--snow)} .near .tree{fill:var(--tree)} .near .lit{fill:var(--lit)} .near .sand{fill:#e9cf9c}
+.cel .sun{fill:var(--sun)} .cel .glow{fill:var(--sun);opacity:.18} .cel .star{fill:#fff} .cel .moon{fill:#f3efe2} .cel .plane{fill:var(--mid)} .cel .trail{fill:none;stroke:#fff;stroke-width:1.4;stroke-dasharray:4 4;opacity:.7}
+.fw{fill:none;stroke-width:1.3;stroke-linecap:round}
+@media (prefers-reduced-motion:no-preference){.fw g{animation:burst 3.2s ease-out infinite;transform-box:fill-box;transform-origin:center}}
+@keyframes burst{0%{opacity:0;transform:scale(.2)}12%{opacity:1}70%{opacity:.8;transform:scale(1)}100%{opacity:0;transform:scale(1.08)}}
+.poster{position:absolute;top:22px;left:0;right:0;z-index:2;color:var(--ink-s);will-change:transform}
+.poster .loc{display:block;font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(54px,16vw,140px);line-height:.85;letter-spacing:.005em;text-wrap:balance}
+.poster .when{display:inline-block;margin-top:10px;font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;border:1.5px solid currentColor;padding:4px 8px}
+.poster .here{display:inline-block;margin:10px 0 0 6px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;background:var(--now);color:#fff;padding:5px 9px}
+
+/* Boleto */
+.ticket{position:relative;z-index:3;max-width:760px;margin:-34px auto 0;background:var(--card);border-top:4px solid var(--ink);padding-block:20px 26px}
+@media (min-width:800px){.ticket{margin-bottom:56px;box-shadow:0 18px 40px -24px rgba(10,12,30,.45)}}
+.t-top{display:flex;justify-content:space-between;align-items:center;gap:12px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.chip{padding:3px 8px;border:1.5px solid currentColor;border-radius:3px;font-weight:600}
+.chip.now{color:var(--now)} .chip.next{color:var(--accent)} .chip.past{color:var(--muted)}
+.ticket h2{font-family:var(--display);font-weight:800;font-size:44px;line-height:.95;text-transform:uppercase;margin:12px 0 2px;text-wrap:balance}
+.country{font-family:var(--mono);font-size:13px;color:var(--muted);margin:0 0 14px}
+.desc{margin:0 0 16px;max-width:62ch}
+.note{margin:0 0 16px;padding:10px 12px;background:color-mix(in srgb,var(--accent) 9%,transparent);border-left:3px solid var(--accent);font-style:italic;max-width:62ch}
+.ticket h3{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.hl{margin:0 0 20px;padding:0;list-style:none;display:grid;gap:6px}
+.hl li{display:grid;grid-template-columns:18px 1fr;gap:6px}
+.hl li::before{content:"";width:8px;height:8px;margin-top:.55em;background:var(--accent);transform:rotate(45deg)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0;margin:0;border-top:1.5px dashed var(--line)}
+.facts>div{padding:12px 10px 4px 0;min-width:0}
+.facts dt{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.facts dd{margin:2px 0 0;font-family:var(--display);font-weight:800;font-size:30px;line-height:1.05;font-variant-numeric:tabular-nums}
+.facts small{display:block;font-family:var(--mono);font-size:11.5px;color:var(--muted);line-height:1.4}
+
+footer{max-width:760px;margin:0 auto;padding-block:40px 60px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+#snow{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:4}
+</style>
+<style>html{color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+
+<header class="bar" id="bar">
+  <div class="bar-in gut">
+    <div class="bar-txt">
+      <div class="bar-label" id="barLabel">Laura despega en</div>
+      <div class="bar-main" id="barMain">&nbsp;</div>
+      <div class="bar-sub" id="barSub">&nbsp;</div>
+    </div>
+    <a class="bar-btn" id="barBtn" href="#itinerario">Ver recorrido</a>
+  </div>
+  <div class="bar-prog"><span id="barProg"></span></div>
+</header>
+
+<section class="hero gut" id="itinerario">
+  <p class="eyebrow">Noviembre 2026 a enero 2027</p>
+  <h1>El viaje<br>de <em>Laura</em></h1>
+  <p class="lead">De Córdoba a Frankfurt, y de ahí en tren por los mercados navideños de Europa hasta Barcelona.</p>
+  <div class="stats" id="stats"></div>
+  <ol class="route" id="route"></ol>
+</section>
+
+<main id="stops"></main>
+
+<footer class="gut">
+  <p>Las ilustraciones son vectores hechos para esta página. El clima en vivo y el pronóstico (hasta dos semanas adelante) vienen de <a href="https://open-meteo.com/">Open-Meteo</a>; para fechas más lejanas se muestra el promedio típico del mes. Las horas de sol se calculan para la fecha de cada parada.</p>
+  <p>Para ver cómo se verá un día del viaje, agregá <code>#simular-2026-12-04</code> al final del enlace.</p>
+</footer>
+<canvas id="snow" aria-hidden="true"></canvas>
+
+<script>
+/* ================== ITINERARIO (editar acá) ==================
+   start/end: fechas en formato AAAA-MM-DD (incluidas).
+   tz: zona horaria de la ciudad. clima: promedio típico del mes. */
+const SALIDA = "2026-11-25T00:00:00-03:00"; // hora de salida desde Córdoba
+const CORDOBA_TZ = "America/Argentina/Cordoba";
+
+const ITINERARIO = [
+ {start:"2026-11-25",end:"2026-11-25",city:"Córdoba → Frankfurt",local:"Despegue",country:"Argentina · escala en Madrid",tz:CORDOBA_TZ,lat:-31.42,lon:-64.18,
+  desc:"Laura sale desde Córdoba, hace escala en Madrid y cruza el Atlántico hasta Frankfurt. Al llegar, el reloj se adelanta cuatro horas.",
+  hl:["Escala en Madrid-Barajas","Llegada a Frankfurt (FRA), el aeropuerto más grande de Alemania","Europa va 4 h adelantada respecto de Córdoba"],
+  clima:{mes:"noviembre",max:29,min:16,txt:"Calor de fin de primavera"},
+  sc:{pal:["#3a2a6b","#f2a271","#b9675a","#4a2338","#2b1424","#ffe1a1","#fff6ea"],far:"sierras",near:"ground",cel:"plane",lm:"cordoba"}},
+ {start:"2026-11-26",end:"2026-11-26",city:"Frankfurt",local:"Frankfurt",country:"Alemania",tz:"Europe/Berlin",lat:50.11,lon:8.68,
+  desc:"La ciudad de los rascacielos de Alemania, sobre el río Meno, con un casco antiguo reconstruido entre torres de vidrio. Para estas fechas ya está abierto el mercado navideño del Römerberg.",
+  hl:["Römerberg y sus casas de frontón","Catedral imperial (Kaiserdom)","Puente de hierro (Eiserner Steg)","Mercado navideño del Römerberg"],
+  note:"A la noche, capaz cena en Mainz con Marina.",
+  clima:{mes:"noviembre",max:8,min:2,txt:"Gris y fresco, llueve seguido"},
+  sc:{pal:["#1e2c57","#e9896a","#4c4c7c","#1f2246","#121430","#ffd27a","#fff3e6"],far:"city",near:"river",cel:"sun",lm:"frankfurt"}},
+ {start:"2026-11-27",end:"2026-11-27",city:"Heidelberg",local:"Heidelberg",country:"Alemania",tz:"Europe/Berlin",lat:49.41,lon:8.69,
+  desc:"Ciudad universitaria a orillas del Neckar, con la universidad más antigua de Alemania (1386). El castillo en ruinas, de piedra roja, mira desde la colina sobre los techos del casco viejo.",
+  hl:["Castillo de Heidelberg y su barril gigante","Puente Viejo (Alte Brücke)","Camino de los Filósofos","Hauptstraße, la calle peatonal"],
+  clima:{mes:"noviembre",max:9,min:3,txt:"Neblina por la mañana"},
+  sc:{pal:["#b7c7cf","#f2e2cc","#8b9f9e","#6b3f3b","#2f3d3c","#fff1c2","#2a2326"],far:"forest",near:"river",cel:"sun",lm:"heidelberg"}},
+ {start:"2026-11-28",end:"2026-11-28",city:"Mainz",local:"Mainz",country:"Alemania",tz:"Europe/Berlin",lat:50.00,lon:8.27,
+  desc:"Mainz, sobre el Rin, es la ciudad de Gutenberg. Su catedral de arenisca roja tiene más de mil años y frente a ella se arma uno de los mercados navideños más lindos de la región.",
+  hl:["Catedral de San Martín","Museo Gutenberg","Iglesia de San Esteban y sus vitrales de Chagall","Mercado navideño frente a la catedral"],
+  note:"Plan B: pasar el día en Frankfurt.",
+  clima:{mes:"noviembre",max:9,min:3,txt:"Nublado, con algo de lluvia"},
+  sc:{pal:["#141b3d","#40407a","#2d3366","#6a2e33","#0e1230","#ffcf70","#f4eee6"],far:"hills",near:"river",cel:"moon",lm:"mainz"}},
+ {start:"2026-11-29",end:"2026-11-29",city:"Estrasburgo",local:"Strasbourg",country:"Francia",tz:"Europe/Paris",lat:48.58,lon:7.75,
+  desc:"Sede del Parlamento Europeo y capital de la Navidad: su Christkindelsmärik, de 1570, es uno de los mercados más antiguos de Europa. La catedral de arenisca rosada tiene una sola aguja.",
+  hl:["Catedral de Notre-Dame y su reloj astronómico","La Petite France y sus casas con entramado","Mercado navideño de la Place Kléber","Paseo en barco por el río Ill"],
+  clima:{mes:"noviembre",max:8,min:2,txt:"Frío húmedo"},
+  sc:{pal:["#f1d3a1","#e8a8a2","#bf8a90","#86495a","#45293a","#fff0c0","#3a1f2b"],far:"hills",near:"canal",cel:"sun",lm:"strasbourg"}},
+ {start:"2026-11-30",end:"2026-11-30",city:"Frankfurt",local:"Frankfurt",country:"Alemania",tz:"Europe/Berlin",lat:50.11,lon:8.68,
+  desc:"Vuelta a la base en Frankfurt antes de salir hacia el este. Buen día para el lado tranquilo de la ciudad, sobre la orilla sur del Meno.",
+  hl:["Museumsufer, la orilla de los museos","Kleinmarkthalle, el mercado cubierto","Mirador de la Main Tower","Sachsenhausen y su sidra (Apfelwein)"],
+  clima:{mes:"noviembre",max:8,min:2,txt:"Gris y fresco"},
+  sc:{pal:["#0d1430","#2b2f5e","#222a52","#0b0f26","#080b1c","#ffcf6e","#f3f0ff"],far:"city",near:"river",cel:"stars",lm:"frankfurt"}},
+ {start:"2026-12-01",end:"2026-12-02",city:"Dresden",local:"Dresden",country:"Alemania",tz:"Europe/Berlin",lat:51.05,lon:13.74,
+  desc:"La Florencia del Elba, capital de Sajonia. La Frauenkirche, destruida en 1945, se reconstruyó piedra por piedra y reabrió en 2005. Acá se arma el Striezelmarkt, el mercado navideño más antiguo de Alemania (1434).",
+  hl:["Frauenkirche","Palacio Zwinger","Ópera Semper","Striezelmarkt"],
+  clima:{mes:"diciembre",max:4,min:-1,txt:"Frío, pueden caer las primeras nevadas"},
+  sc:{pal:["#3b4c79","#f0ae88","#6a6d8f","#2b2c45","#1a1b30","#ffd38a","#fff6ee"],far:"hills",near:"river",cel:"sun",lm:"dresden",snow:true}},
+ {start:"2026-12-03",end:"2026-12-04",city:"Praga",local:"Praha",country:"República Checa",tz:"Europe/Prague",lat:50.08,lon:14.42,
+  desc:"La ciudad de las cien torres, sobre el río Moldava. Puentes góticos, un castillo en la colina y un reloj astronómico que funciona desde 1410.",
+  hl:["Puente de Carlos","Castillo y Catedral de San Vito","Plaza de la Ciudad Vieja e iglesia de Týn","Reloj astronómico"],
+  clima:{mes:"diciembre",max:3,min:-2,txt:"Frío seco, puede nevar"},
+  sc:{pal:["#2a2250","#c96a86","#5b4171","#231a3a","#140f29","#ffc98a","#fff0f3"],far:"hills",near:"river",cel:"moon",lm:"prague",snow:true}},
+ {start:"2026-12-05",end:"2026-12-07",city:"Cracovia",local:"Kraków",country:"Polonia",tz:"Europe/Warsaw",lat:50.06,lon:19.94,
+  desc:"Antigua capital de Polonia, con una de las plazas medievales más grandes de Europa. Cada hora un trompetista toca el hejnał desde la torre de Santa María y lo corta a mitad de la melodía.",
+  hl:["Rynek Główny y la Lonja de los Paños","Basílica de Santa María","Castillo de Wawel","Barrio judío de Kazimierz"],
+  clima:{mes:"diciembre",max:3,min:-3,txt:"Helada casi todas las noches"},
+  sc:{pal:["#aebdd0","#eef1f5","#97a6ba","#6d3433","#3b2b2e","#ffe6a8","#2b1d20"],far:"hills",near:"snow",cel:"sun",lm:"krakow",snow:true}},
+ {start:"2026-12-08",end:"2026-12-10",city:"Budapest",local:"Budapest",country:"Hungría",tz:"Europe/Budapest",lat:47.50,lon:19.04,
+  desc:"Dos ciudades, Buda y Pest, unidas por los puentes del Danubio. De noche el Parlamento se ilumina de dorado sobre el agua.",
+  hl:["Parlamento húngaro","Puente de las Cadenas","Bastión de los Pescadores","Baños termales Széchenyi"],
+  clima:{mes:"diciembre",max:4,min:-1,txt:"Frío y nublado"},
+  sc:{pal:["#0c1838","#273862","#1b2a50","#c99447","#0a1430","#fff1c9","#f6e7c6"],far:"hills",near:"river",cel:"stars",lm:"budapest"}},
+ {start:"2026-12-11",end:"2026-12-13",city:"Munich",local:"München",country:"Alemania",tz:"Europe/Berlin",lat:48.14,lon:11.58,
+  desc:"La capital de Baviera, con los Alpes en el horizonte cuando el día está claro. Las cúpulas verdes de la Frauenkirche son el símbolo de la ciudad.",
+  hl:["Marienplatz y el carillón del Nuevo Ayuntamiento","Frauenkirche","Viktualienmarkt","Englischer Garten"],
+  clima:{mes:"diciembre",max:4,min:-3,txt:"Frío, buena chance de nieve"},
+  sc:{pal:["#79acdb","#e4eef7","#9ab1ca","#36405a","#2a3346","#fff3c4","#1c2438"],far:"alps",near:"snow",cel:"sun",lm:"munich",snow:true}},
+ {start:"2026-12-14",end:"2026-12-16",city:"Nuremberg",local:"Nürnberg",country:"Alemania",tz:"Europe/Berlin",lat:49.45,lon:11.08,
+  desc:"Ciudad imperial amurallada, famosa por su Christkindlesmarkt, los Lebkuchen y las salchichitas a la parrilla. Desde el castillo se ve todo el casco antiguo.",
+  hl:["Castillo imperial (Kaiserburg)","Christkindlesmarkt en la Hauptmarkt","Fuente Hermosa (Schöner Brunnen)","Iglesia de San Lorenzo"],
+  note:"Capaz va a otras ciudades, como Rothenburg ob der Tauber, con su alumna.",
+  clima:{mes:"diciembre",max:4,min:-2,txt:"Frío, puede nevar"},
+  sc:{pal:["#1b1031","#4c1f3d","#2f1a3c","#140b22","#0c0716","#ffbe5c","#ffe9d0"],far:"hills",near:"market",cel:"stars",lm:"nuremberg",snow:true}},
+ {start:"2026-12-17",end:"2026-12-17",city:"Bruselas",local:"Bruxelles",country:"Bélgica",tz:"Europe/Brussels",lat:50.85,lon:4.35,
+  desc:"Capital de Bélgica y de la Unión Europea. La Grand-Place, rodeada de casas gremiales doradas, es para muchos la plaza más linda del mundo.",
+  hl:["Grand-Place y el Ayuntamiento gótico","Atomium","Manneken Pis","Waffles y chocolate belga"],
+  clima:{mes:"diciembre",max:7,min:2,txt:"Húmedo, llovizna frecuente"},
+  sc:{pal:["#8aa0ba","#dde2e8","#6f8299","#3b4556","#2a3240","#eef3fa","#1b2230"],far:"city",near:"ground",cel:"sun",lm:"brussels"}},
+ {start:"2026-12-18",end:"2026-12-18",city:"Brujas",local:"Brugge",country:"Bélgica",tz:"Europe/Brussels",lat:51.21,lon:3.22,
+  desc:"Brujas conserva casi intacto su casco medieval, con canales, puentes de piedra y casas de frontón escalonado.",
+  hl:["Campanario (Belfort), de 83 metros","Plaza Markt","Paseo en bote por los canales","Lago del Amor (Minnewater)"],
+  clima:{mes:"diciembre",max:7,min:2,txt:"Viento del mar del Norte"},
+  sc:{pal:["#56699a","#f2a65c","#8a6c8c","#3a2a3d","#251f38","#ffd890","#fff4e4"],far:"hills",near:"canal",cel:"sun",lm:"bruges"}},
+ {start:"2026-12-19",end:"2026-12-22",city:"Edimburgo",local:"Edinburgh",country:"Escocia",tz:"Europe/London",lat:55.95,lon:-3.19,
+  desc:"La capital escocesa, entre un castillo sobre roca volcánica y un volcán extinguido, Arthur's Seat. En diciembre el sol sale tarde y se pone antes de las cuatro de la tarde.",
+  hl:["Castillo de Edimburgo","Royal Mile","Subida a Arthur's Seat","Monumento a Walter Scott"],
+  clima:{mes:"diciembre",max:7,min:2,txt:"Viento y lluvia, días muy cortos"},
+  sc:{pal:["#2c394d","#8d9db2","#46546a","#1b2432","#111824","#ffd98f","#f1f4f8"],far:"crag",near:"ground",cel:"moon",lm:"edinburgh"}},
+ {start:"2026-12-23",end:"2026-12-25",city:"York",local:"York",country:"Inglaterra",tz:"Europe/London",lat:53.96,lon:-1.08,
+  desc:"Ciudad amurallada, romana y vikinga. Su catedral gótica, el York Minster, guarda uno de los vitrales medievales más grandes del mundo. Laura pasa acá la Navidad.",
+  hl:["York Minster","The Shambles, la calle medieval","Paseo por las murallas","Afternoon tea en Bettys"],
+  clima:{mes:"diciembre",max:7,min:1,txt:"Escarcha por la mañana"},
+  sc:{pal:["#d6c6de","#f5eee6","#b2a5bf","#6b6670","#46434e","#fff1c0","#2c2830"],far:"hills",near:"snow",cel:"sun",lm:"york",snow:true}},
+ {start:"2026-12-26",end:"2027-01-04",city:"Londres",local:"London",country:"Inglaterra",tz:"Europe/London",lat:51.51,lon:-0.13,
+  desc:"Diez días en Londres, con Año Nuevo incluido. A la medianoche del 31, los fuegos artificiales salen del London Eye sobre el Támesis.",
+  hl:["Big Ben y Westminster","London Eye y South Bank","Tower Bridge","Museos gratis: British Museum y National Gallery"],
+  note:"Posibles excursiones de un día desde Londres.",
+  clima:{mes:"diciembre",max:9,min:4,txt:"Húmedo, casi nunca nieva"},
+  sc:{pal:["#0b1028","#2b1f50","#1d1f45","#0a0b1f","#070818","#ffd27a","#f5f0ff"],far:"city",near:"river",cel:"fireworks",lm:"london"}},
+ {start:"2027-01-04",end:"2027-01-05",city:"Barcelona",local:"Barcelona",country:"España",tz:"Europe/Madrid",lat:41.39,lon:2.17,
+  desc:"Última parada, con el Mediterráneo y sol de invierno. La Sagrada Familia de Gaudí, empezada en 1882, es desde 2026 la iglesia más alta del mundo. El 5 de enero la Cabalgata de Reyes recorre la ciudad.",
+  hl:["Sagrada Familia","Park Güell","Barrio Gótico","La Barceloneta y el mar"],
+  clima:{mes:"enero",max:14,min:6,txt:"Soleado y templado"},
+  sc:{pal:["#78c3e6","#f8e2b2","#dfa678","#9e573a","#2f7da6","#fff4d0","#2a1a12"],far:"hills",near:"sea",cel:"sun",lm:"barcelona"}},
+ {start:"2027-01-06",end:"2027-01-06",city:"Barcelona → Córdoba",local:"Regreso",country:"España · escala en Bogotá",tz:"Europe/Madrid",lat:41.39,lon:2.17,
+  desc:"Vuelta a casa con escala en Bogotá. En Córdoba la espera el verano.",
+  hl:["Salida desde Barcelona-El Prat","Escala en Bogotá (El Dorado)","Llegada a Córdoba"],
+  clima:{mes:"enero en Córdoba",max:31,min:17,txt:"Pleno verano"},
+  sc:{pal:["#3f74cc","#bcd8f2","#ffffff","#24406e","#ffffff","#fff4d0","#ffffff"],far:"clouds",near:"clouds",cel:"plane",lm:"none"}}
+];
+
+/* ================== Utilidades ================== */
+const DAY=864e5;
+const MES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+const pad=n=>String(n).padStart(2,"0");
+let SIM=null;
+(function(){const m=location.hash.match(/^#simular-(\d{4})-(\d{2})-(\d{2})$/);if(m)SIM=Date.UTC(+m[1],m[2]-1,+m[3],12)-Date.now();})();
+const now=()=>new Date(Date.now()+(SIM||0));
+const fmtCache={};
+function fmt(tz,opts){const k=tz+JSON.stringify(opts);return fmtCache[k]||(fmtCache[k]=new Intl.DateTimeFormat("es-AR",{timeZone:tz,...opts}))}
+const timeIn=(tz,d=now())=>fmt(tz,{hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(d);
+const dateIn=(tz,d=now())=>new Intl.DateTimeFormat("en-CA",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit"}).format(d);
+function offsetH(tz,d=now()){const s=new Intl.DateTimeFormat("en-US",{timeZone:tz,timeZoneName:"shortOffset"}).formatToParts(d).find(p=>p.type==="timeZoneName").value;const m=s.match(/GMT([+-]\d+)(?::(\d+))?/);return m?(+m[1]+(m[2]?Math.sign(+m[1])*m[2]/60:0)):0}
+const parseD=s=>{const[y,m,d]=s.split("-").map(Number);return Date.UTC(y,m-1,d)};
+const shortD=s=>{const[y,m,d]=s.split("-").map(Number);return `${pad(d)} ${MES[m-1]}`};
+const roman=["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+
+/* Salida y puesta del sol (ecuación solar estándar) */
+function sun(dateStr,lat,lon){
+  const rad=Math.PI/180,J=parseD(dateStr)/DAY+2440587.5+.5;
+  const n=Math.round(J-2451545+.0008),Js=n-lon/360;
+  const M=(357.5291+.98560028*Js)%360,C=1.9148*Math.sin(M*rad)+.02*Math.sin(2*M*rad)+.0003*Math.sin(3*M*rad);
+  const lam=(M+C+180+102.9372)%360,Jt=2451545+Js+.0053*Math.sin(M*rad)-.0069*Math.sin(2*lam*rad);
+  const dec=Math.asin(Math.sin(lam*rad)*Math.sin(23.44*rad));
+  const cw=(Math.sin(-.833*rad)-Math.sin(lat*rad)*Math.sin(dec))/(Math.cos(lat*rad)*Math.cos(dec));
+  const w=Math.acos(Math.max(-1,Math.min(1,cw)))/rad;
+  const toD=j=>new Date((j-2440587.5)*DAY);
+  return{rise:toD(Jt-w/360),set:toD(Jt+w/360),len:w/180*24};
+}
+
+/* ================== Dibujo vectorial ================== */
+const R=(x,y,w,h,c)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}"${c?` class="${c}"`:""}/>`;
+const PG=(p,c)=>`<polygon points="${p}"${c?` class="${c}"`:""}/>`;
+const P=(d,c)=>`<path d="${d}"${c?` class="${c}"`:""}/>`;
+const Ci=(x,y,r,c)=>`<circle cx="${x}" cy="${y}" r="${r}"${c?` class="${c}"`:""}/>`;
+const Ln=(x1,y1,x2,y2,w=2)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="str" stroke-width="${w}"/>`;
+const T=(cx,top,w,base,c)=>PG(`${cx-w/2},${base} ${cx},${top} ${cx+w/2},${base}`,c);
+const Dm=(cx,base,r,c)=>P(`M${cx-r} ${base}A${r} ${r} 0 0 1 ${cx+r} ${base}Z`,c);
+const ON=(cx,base,w,h,c)=>P(`M${cx-w/2} ${base}C${cx-w/2} ${base-h*.45} ${cx-w*.12} ${base-h*.55} ${cx} ${base-h}C${cx+w*.12} ${base-h*.55} ${cx+w/2} ${base-h*.45} ${cx+w/2} ${base}Z`,c);
+const WIN=(x,y,cols,rows,dx,dy,w,h)=>{let s="";for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)s+=R(x+c*dx,y+r*dy,w,h,"lit");return s};
+const HOUSE=(x,w,h,roof,c="fr")=>R(x,200-h,w,h,c)+PG(`${x-2},${200-h} ${x+w/2},${200-h-roof} ${x+w+2},${200-h}`,c);
+const STEP=(x,w,h,n,c="fr")=>{const top=200-h,sw=w/(2*n-1),sh=w*.8/n;let X=x,Y=top;const p=[`${x},200`,`${x},${top}`];
+  for(let i=0;i<n;i++){Y-=sh;p.push(`${X},${Y}`);X+=sw;p.push(`${X},${Y}`)}
+  for(let i=0;i<n-1;i++){Y+=sh;p.push(`${X},${Y}`);X+=sw;p.push(`${X},${Y}`)}
+  Y+=sh;p.push(`${X},${Y}`,`${X},200`);return PG(p.join(" "),c)};
+const BATT=(x,y,w,n,c)=>{let s="";const st=w/n;for(let i=0;i<n;i++)s+=R(x+i*st,y-5,st/2,5,c);return s};
+const SP=(x,top,w)=>P(`M${x-w/2} 200L${x-w*.3} ${top+w}Q${x} ${top-w*.5} ${x+w*.3} ${top+w}L${x+w/2} 200Z`);
+const PALM=(x,h)=>R(x,200-h,4,h)+[[-26,-8],[-20,8],[24,-8],[20,8],[0,-16]].map(([dx,dy])=>P(`M${x+2} ${200-h}Q${x+2+dx*.5} ${200-h+dy-10} ${x+2+dx} ${200-h+dy+6}Q${x+2+dx*.4} ${200-h+dy-4} ${x+2} ${200-h}Z`)).join("");
+
+const LANDMARK={
+ none:()=>"",
+ cordoba:()=>R(130,120,140,80)+R(116,58,36,142)+R(248,58,36,142)+R(122,38,24,22)+R(254,38,24,22)+Dm(134,38,12)+Dm(266,38,12)
+   +R(133,14,2,14)+R(129,19,10,2)+R(265,14,2,14)+R(261,19,10,2)+R(176,94,48,28)+Dm(200,94,28)+R(195,56,10,12)+R(199,40,2,16)+R(195,45,10,2)
+   +R(190,162,20,38,"lit")+WIN(126,74,2,3,12,26,6,12)+WIN(258,74,2,3,12,26,6,12)+WIN(150,134,2,1,86,0,10,16)+PALM(40,78)+PALM(345,92)+PALM(372,64),
+ frankfurt:()=>R(36,92,32,108)+T(52,74,32,92)+R(88,42,28,158)+PG("88,42 102,8 116,42")+R(136,56,38,144)+R(154,16,2,40)+R(194,24,40,176)+PG("194,24 214,-14 234,24")
+   +R(252,70,36,130)+R(298,96,46,104)+R(350,120,34,80)
+   +WIN(92,52,3,12,8,12,4,6)+WIN(141,66,4,11,8,12,4,6)+WIN(199,36,4,13,9,12,5,6)+WIN(257,80,4,9,8,12,4,6)+WIN(304,106,5,7,8,12,4,6)
+   +STEP(118,40,52,3)+STEP(160,38,56,3)+STEP(200,42,50,3)+WIN(124,160,3,2,11,14,5,7)+WIN(166,156,3,2,11,14,5,7)+WIN(207,162,3,2,11,14,5,7),
+ heidelberg:()=>P("M0 200L0 126Q60 98 130 92Q200 88 250 104Q320 124 400 152L400 200Z","fr")+R(68,64,26,36)+BATT(68,64,26,4)+R(100,50,80,46)
+   +PG("100,50 100,40 112,45 126,33 140,43 156,36 168,45 180,40 180,50")+R(186,58,26,40)+T(199,32,32,58)+WIN(106,62,7,2,10,14,5,8)
+   +R(140,140,14,60)+R(158,140,14,60)+ON(147,140,16,20)+ON(165,140,16,20)+R(150,166,250,9)+[180,230,280,330,380].map(x=>R(x,175,9,25)).join(""),
+ mainz:()=>R(96,130,204,70)+PG("96,130 198,104 300,130")+R(108,80,42,120)+PG("108,80 129,40 150,80")+R(98,98,10,40)+T(103,84,10,98)
+   +R(184,96,32,34)+T(200,70,32,96)+R(232,60,52,140)+R(238,30,40,30)+R(244,10,28,20)+PG("244,10 258,-34 272,10")
+   +WIN(116,92,3,3,10,22,5,12)+WIN(240,74,4,3,11,24,5,12)+WIN(160,146,6,1,12,0,6,14)+R(250,176,16,24,"lit"),
+ strasbourg:()=>R(250,110,74,90)+PG("250,110 287,88 324,110")+R(150,80,100,120)+R(150,30,42,50)+R(156,10,30,20)+PG("156,10 171,-72 186,10")
+   +T(150,66,6,80)+T(250,66,6,80)+R(208,62,42,18)+BATT(208,62,42,5)+Ci(200,112,14,"lit")+R(186,164,28,36,"lit")+WIN(160,40,3,1,8,0,4,18)
+   +HOUSE(16,40,56,40)+HOUSE(60,36,48,36)+HOUSE(100,38,44,34)+HOUSE(332,34,52,36)+HOUSE(368,34,44,32)
+   +WIN(22,158,3,2,12,16,5,7)+WIN(66,166,3,1,10,0,5,7)+WIN(338,160,3,2,10,16,5,7),
+ dresden:()=>R(40,140,100,60)+Dm(90,140,28)+WIN(50,152,7,2,12,18,6,9)+R(160,120,80,80)+R(152,94,14,106)+R(234,94,14,106)+ON(159,94,14,22)+ON(241,94,14,22)
+   +P("M165 122C163 78 186 58 200 54C214 58 237 78 235 122Z")+R(193,34,14,22)+ON(200,34,14,26)+R(199,-2,2,10)+WIN(172,134,4,2,16,26,8,14)
+   +R(270,140,90,60)+R(300,70,22,130)+R(304,40,14,30)+R(307,20,8,20)+PG("307,20 311,-12 315,20")+WIN(276,150,6,2,14,18,6,9),
+ prague:()=>P("M0 200L0 112Q60 100 190 108L196 200Z","fr")+R(10,86,170,24)+WIN(16,92,15,1,11,0,5,8)+PG("60,86 100,70 178,70 178,86")
+   +R(108,32,18,54)+ON(117,32,18,26)+R(138,48,10,38)+PG("138,48 143,12 148,48")+R(154,48,10,38)+PG("154,48 159,12 164,48")
+   +R(296,110,56,90)+R(298,60,16,140)+R(332,60,16,140)+PG("296,60 306,-14 316,60")+PG("330,60 340,-14 350,60")+T(298,40,4,62)+T(314,40,4,62)+T(332,40,4,62)+T(348,40,4,62)
+   +R(150,158,250,9)+[175,225,275,325,375].map(x=>R(x,167,9,33)).join("")+R(198,108,32,52)+PG("198,108 214,64 230,108")+WIN(205,122,2,2,12,16,5,8)
+   +[160,250,270,300,350,390].map(x=>R(x,148,2,10)).join(""),
+ krakow:()=>R(8,150,142,50)+[...Array(14)].map((_,i)=>R(10+i*10,142,5,8)).join("")+R(70,168,18,32,"lit")+WIN(18,160,5,1,12,0,6,10)+WIN(98,160,4,1,12,0,6,10)
+   +R(168,130,122,70)+PG("168,130 229,104 290,130")+R(164,40,36,160)+PG("164,40 182,-62 200,40")+T(167,26,6,42)+T(197,26,6,42)+Ci(182,-26,3,"lit")
+   +R(254,80,34,120)+ON(271,80,34,40)+R(268,34,6,8)+T(271,20,6,36)+R(176,56,6,22,"lit")+R(188,56,6,22,"lit")+R(264,96,5,18,"lit")+R(276,96,5,18,"lit")
+   +R(214,142,10,30,"lit")+R(236,142,10,30,"lit")+HOUSE(310,38,54,26)+HOUSE(352,40,46,24)+WIN(318,158,3,2,10,14,5,7),
+ budapest:()=>R(20,145,360,55)+[...Array(23)].map((_,i)=>{const x=26+i*16;return x>150&&x<250?"":T(x,128,6,145)}).join("")
+   +R(56,118,28,32)+PG("56,118 70,98 84,118")+R(316,118,28,32)+PG("316,118 330,98 344,118")
+   +R(150,108,12,40)+T(156,82,12,108)+R(238,108,12,40)+T(244,82,12,108)+R(165,110,70,40)+R(178,86,44,30)+P("M174 88C174 50 226 50 226 88Z")+PG("196,62 200,-10 204,62")
+   +WIN(28,154,22,2,16,18,6,9)+WIN(186,94,4,1,9,0,4,12),
+ munich:()=>R(40,72,22,128)+R(43,50,16,22)+ON(51,50,18,20)+R(50,22,2,10)+R(240,130,110,70)+PG("240,130 295,84 350,130")
+   +R(120,42,32,158)+R(162,42,32,158)+ON(136,42,32,42)+ON(178,42,32,42)+R(135,-8,2,10)+R(177,-8,2,10)+R(150,120,90,80)
+   +WIN(128,60,2,4,12,24,5,14)+WIN(170,60,2,4,12,24,5,14)+WIN(250,150,8,2,12,20,5,10)
+   +R(352,112,40,88)+R(364,56,16,56)+PG("364,56 372,16 380,56")+WIN(358,124,3,3,12,20,5,9),
+ nuremberg:()=>P("M0 200L0 142L60 130L180 124L232 140L232 200Z","fr")+R(40,96,150,34)+BATT(40,96,150,10)+R(118,52,26,48)+PG("116,52 131,22 146,52")
+   +R(58,70,22,30)+PG("56,70 69,50 82,70")+WIN(50,106,10,1,13,0,6,9)+R(296,80,12,120)+R(322,80,12,120)+PG("296,80 302,40 308,80")+PG("322,80 328,40 334,80")+R(292,120,46,80)
+   +Ci(315,140,8,"lit")+[236,276,316,356].map(x=>R(x,174,34,26,"fr")+PG(`${x-4},174 ${x+17},158 ${x+38},174`)+R(x+6,180,22,10,"lit")).join(""),
+ brussels:()=>R(40,120,140,80)+PG("40,120 110,102 180,120")+R(100,40,20,80)+R(103,16,14,24)+R(106,-4,8,20)+PG("106,-4 110,-36 114,-4")
+   +WIN(48,132,10,3,13,20,6,11)+WIN(104,52,2,3,8,18,4,10)
+   +[[300,22],[276,53],[324,53],[252,95],[348,95],[276,137],[324,137],[300,168]].map(([x,y])=>Ln(300,95,x,y,4)).join("")
+   +Ln(300,22,276,53,4)+Ln(300,22,324,53,4)+Ln(276,53,252,95,4)+Ln(324,53,348,95,4)+Ln(252,95,276,137,4)+Ln(348,95,324,137,4)+Ln(276,137,300,168,4)+Ln(324,137,300,168,4)
+   +Ln(300,168,300,200,5)+Ln(276,137,250,200,4)+Ln(324,137,350,200,4)
+   +[[300,22],[276,53],[324,53],[252,95],[300,95],[348,95],[276,137],[324,137],[300,168]].map(([x,y])=>Ci(x,y,13)+Ci(x-4,y-4,4,"lit")).join(""),
+ bruges:()=>R(175,60,50,140)+R(182,30,36,30)+R(188,0,24,30)+R(195,-20,10,20)+T(200,-40,10,-20)+T(176,46,6,60)+T(224,46,6,60)
+   +Ci(200,78,7,"lit")+WIN(190,96,2,3,14,26,6,14)+WIN(192,8,2,1,10,0,4,14)
+   +STEP(8,40,60,4)+STEP(50,36,52,3)+STEP(88,42,66,4)+STEP(132,38,48,3)+STEP(230,38,56,3)+STEP(270,42,68,4)+STEP(314,36,50,3)+STEP(352,44,62,4)
+   +WIN(16,160,3,2,10,16,5,8)+WIN(96,154,3,2,11,16,5,8)+WIN(278,152,3,2,11,16,5,8)+WIN(360,158,3,2,11,16,5,8),
+ edinburgh:()=>P("M0 200L0 150L30 140L55 118L80 112L95 96L180 92L222 100L250 122L270 150L292 200Z","fr")
+   +R(90,70,140,26)+BATT(90,70,140,12)+R(110,46,26,24)+BATT(110,46,26,3)+R(168,54,42,16)+PG("168,54 189,40 210,54")+R(196,74,40,22)
+   +WIN(96,78,12,1,11,0,5,8)+WIN(116,54,2,1,10,0,4,8)
+   +PG("322,200 322,140 329,122 334,60 338,14 342,60 347,122 354,140 354,200")+T(322,118,4,140)+T(354,118,4,140)+T(329,96,3,122)+T(347,96,3,122)+R(332,150,12,30,"lit"),
+ york:()=>R(140,110,200,70)+PG("140,110 240,92 340,110")+R(216,54,54,60)+[218,231,244,257,268].map(x=>T(x,38,5,56)).join("")
+   +R(94,58,26,122)+R(132,58,26,122)+T(96,40,5,58)+T(118,40,5,58)+T(134,40,5,58)+T(156,40,5,58)+R(94,96,64,84)
+   +P("M110 170L110 120Q126 98 142 120L142 170Z","lit")+WIN(226,66,4,1,11,0,5,30)+WIN(176,124,6,1,24,0,8,22)
+   +R(0,182,400,18,"fr")+BATT(0,182,400,40,"fr"),
+ london:()=>R(62,60,30,140)+R(58,34,38,28)+Ci(77,48,9,"lit")+R(62,12,30,22)+PG("60,12 77,-42 94,12")+R(76,-54,2,12)
+   +R(92,130,140,70)+[...Array(12)].map((_,i)=>T(98+i*12,114,5,130)).join("")+WIN(98,142,11,2,12,20,5,10)+WIN(68,74,2,5,12,22,5,12)
+   +`<circle cx="300" cy="86" r="72" class="str" stroke-width="3"/><circle cx="300" cy="86" r="64" class="str" stroke-width="1"/>`
+   +[...Array(16)].map((_,i)=>{const a=i*Math.PI/8;return Ln(300,86,(300+64*Math.cos(a)).toFixed(1),(86+64*Math.sin(a)).toFixed(1),.8)}).join("")
+   +[...Array(32)].map((_,i)=>{const a=i*Math.PI/16;return Ci((300+74*Math.cos(a)).toFixed(1),(86+74*Math.sin(a)).toFixed(1),2.6,"lit")}).join("")
+   +Ci(300,86,6)+Ln(300,86,266,200,5)+Ln(300,86,286,200,4),
+ barcelona:()=>R(90,140,220,60)+SP(102,40,18)+SP(120,18,18)+SP(138,18,18)+SP(156,40,18)+SP(244,40,18)+SP(262,18,18)+SP(280,18,18)+SP(298,40,18)
+   +SP(176,-30,22)+SP(224,-30,22)+SP(188,-48,20)+SP(212,-48,20)+SP(200,-84,26)+R(199,-104,2,20)+R(193,-97,14,2)+Ci(176,-38,3,"lit")
+   +WIN(110,156,10,1,18,0,6,14)+PALM(30,74)+PALM(356,90)+PALM(380,62)
+};
+
+function ridge(rnd,base,amp,n,jag){
+  const pts=[];for(let i=0;i<=n;i++)pts.push([i*400/n,base-amp*(.3+.7*rnd())]);
+  let d=`M0 200L0 ${pts[0][1].toFixed(1)}`;
+  if(jag)pts.forEach(p=>d+=`L${p[0].toFixed(1)} ${p[1].toFixed(1)}`);
+  else{for(let i=0;i<n;i++){const[a,b]=pts[i],[c,e]=pts[i+1];d+=`Q${a.toFixed(1)} ${b.toFixed(1)} ${((a+c)/2).toFixed(1)} ${((b+e)/2).toFixed(1)}`}d+=`L400 ${pts[n][1].toFixed(1)}`}
+  const at=x=>{const f=x/400*n,i=Math.min(n-1,Math.floor(f)),t=f-i;return pts[i][1]*(1-t)+pts[i+1][1]*t};
+  return{d:d+"L400 200Z",at};
+}
+const cloud=(x,y,s)=>`<g class="cloud">${Ci(x,y,14*s)+Ci(x+16*s,y-8*s,18*s)+Ci(x+36*s,y,15*s)+R(x,y,36*s,14*s)}</g>`;
+function FAR(type,rnd){
+  if(type==="clouds"){let s="";for(let i=0;i<9;i++)s+=cloud(rnd()*380,120+rnd()*70,.9+rnd()*1.2);return s+R(0,170,400,30,"cloud")}
+  const back=ridge(rnd,type==="sierras"?118:126,type==="sierras"?60:38,type==="sierras"?10:6,type==="sierras");
+  let s=P(back.d,"back");
+  if(type==="alps"){for(let k=0;k<7;k++){const px=10+k*62+rnd()*24,h=70+rnd()*55,w=100+rnd()*40,b=170;
+      s+=PG(`${px-w/2},${b} ${px},${b-h} ${px+w/2},${b}`,"back");
+      const sx=w*.16,sy=h*.32;s+=PG(`${px-sx},${b-h+sy} ${px},${b-h} ${px+sx},${b-h+sy} ${px+sx*.4},${b-h+sy*.75} ${px},${b-h+sy*1.05} ${px-sx*.45},${b-h+sy*.7}`,"snowc")}}
+  if(type==="crag")s+=P("M190 200L222 124L254 104L280 70L298 80L330 112L378 128L400 138L400 200Z","back");
+  const front=ridge(rnd,158,26,8,false);
+  if(type==="city"){for(let x=0;x<400;x+=14+rnd()*10){const h=10+rnd()*36;s+=R(x.toFixed(1),(150-h).toFixed(1),(8+rnd()*8).toFixed(1),h+50)}}
+  s+=P(front.d);
+  if(type==="forest"){for(let x=4;x<400;x+=6+rnd()*6){const y=front.at(x);const h=8+rnd()*10;s+=T(x.toFixed(1),(y-h).toFixed(1),6,(y+3).toFixed(1))}}
+  return s;
+}
+function NEAR(type,rnd){
+  let s="";
+  if(type==="river"||type==="canal"){
+    s+=R(0,10,400,6)+R(0,16,400,70,"water");
+    for(let i=0;i<18;i++)s+=R((rnd()*390).toFixed(1),(22+rnd()*52).toFixed(1),(8+rnd()*34).toFixed(1),1.6,"refl");
+    if(type==="canal")s+=P("M150 40L150 2L250 2L250 40L236 40Q200 6 164 40Z")+R(146,-2,108,5);
+    return s;
+  }
+  if(type==="sea"){s+=R(0,0,400,80,"water");for(let i=0;i<16;i++)s+=R((rnd()*390).toFixed(1),(6+rnd()*40).toFixed(1),(10+rnd()*30).toFixed(1),1.4,"refl");return s+P("M0 80L0 56Q120 44 240 52T400 48L400 80Z","sand")}
+  if(type==="clouds"){for(let i=0;i<10;i++)s+=cloud(rnd()*400-20,18+rnd()*30,.8+rnd()*.8);return s+R(0,40,400,40,"cloud")}
+  const snowy=type==="snow"||type==="market";
+  s+=P("M0 80L0 20Q100 8 200 17T400 14L400 80Z",snowy?"snow":"");
+  for(let i=0;i<9;i++){const x=rnd()*400,h=(snowy?16:9)+rnd()*(snowy?14:9),y=24+rnd()*10;
+    s+=snowy?T(x.toFixed(1),(y-h).toFixed(1),h*.6,y.toFixed(1),"tree")+T(x.toFixed(1),(y-h*1.25).toFixed(1),h*.42,(y-h*.45).toFixed(1),"tree")
+            :Ci(x.toFixed(1),(y-h*.6).toFixed(1),(h*.4).toFixed(1))+R((x-1).toFixed(1),(y-h*.4).toFixed(1),2,h*.4)}
+  if(type==="market"){s+=`<path d="M0 6Q100 22 200 6T400 6" fill="none" stroke="currentColor" stroke-width=".6" opacity=".5"/>`;for(let x=6;x<400;x+=12){const t=(x%200)/200;s+=Ci(x,(6+16*4*t*(1-t)).toFixed(1),1.6,"lit")}}
+  return s;
+}
+function CEL(type,rnd){
+  let s="";
+  if(type==="sun")s+=Ci(262,104,46,"glow")+Ci(262,104,26,"sun");
+  if(type==="moon"||type==="stars"||type==="fireworks"){for(let i=0;i<60;i++)s+=`<circle cx="${(rnd()*400).toFixed(1)}" cy="${(rnd()*190).toFixed(1)}" r="${(.4+rnd()*1.1).toFixed(2)}" class="star" opacity="${(.3+rnd()*.7).toFixed(2)}"/>`}
+  if(type==="moon")s+=Ci(262,64,34,"glow")+Ci(262,64,17,"moon");
+  if(type==="plane"){s+=`<path d="M20 170Q150 150 268 90" class="trail"/>`+`<g transform="translate(274 86) rotate(-28)" class="plane"><path d="M-22 0L14 -3Q24 0 14 3L-22 0Z"/><path d="M-4 -1L-14 -20L-8 -20L6 -2Z"/><path d="M-4 1L-14 20L-8 20L6 2Z"/><path d="M-19 0L-24 -9L-20 -9L-14 0Z"/></g>`+cloud(40,200,1)+cloud(330,220,.8)}
+  if(type==="fireworks"){const cols=["#ffd27a","#ff6a8a","#8fd3ff","#c6a4ff"];
+    [[150,70,30],[250,52,38],[205,118,24],[275,140,20],[130,150,18]].forEach(([x,y,r],k)=>{let g="";for(let i=0;i<16;i++){const a=i*Math.PI/8;g+=`<line x1="${(x+r*.25*Math.cos(a)).toFixed(1)}" y1="${(y+r*.25*Math.sin(a)).toFixed(1)}" x2="${(x+r*Math.cos(a)).toFixed(1)}" y2="${(y+r*Math.sin(a)).toFixed(1)}"/>`}
+      s+=`<g class="fw" stroke="${cols[k%4]}"><g style="animation-delay:${k*.7}s">${g}</g></g>`})}
+  return s;
+}
+
+/* ================== Render ================== */
+const stopsEl=document.getElementById("stops");
+const N=ITINERARIO.length;
+ITINERARIO.forEach((s,i)=>{
+  s.id="parada-"+(i+1);
+  const days=(parseD(s.end)-parseD(s.start))/DAY+1;
+  s.days=days;
+  const [s1,s2,far,mid,near,lit,ink]=s.sc.pal;
+  const rnd=rng(i*97+13);
+  const m=+s.start.slice(5,7);
+  const whenTxt=s.start===s.end?`${s.start.slice(8)} · ${roman[m-1]}`:`${s.start.slice(8)}–${s.end.slice(8)} · ${roman[+s.end.slice(5,7)-1]}`;
+  const el=document.createElement("article");
+  el.className="stop";el.id=s.id;
+  el.innerHTML=`
+  <div class="scene" style="--s1:${s1};--s2:${s2};--far:${far};--mid:${mid};--near:${near};--lit:${lit};--ink-s:${ink};color:${mid}">
+    <div class="ly ly-cel" data-depth=".8"><svg class="cel" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${CEL(s.sc.cel,rnd)}</svg></div>
+    <div class="ly ly-far" data-depth=".55"><svg class="far" viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true">${FAR(s.sc.far,rnd)}</svg></div>
+    <div class="ly ly-lm" data-depth=".25"><svg class="lm" viewBox="0 0 400 300" preserveAspectRatio="xMidYMax meet" role="img" aria-label="Ilustración de ${s.city}"><g transform="translate(0 100)">${LANDMARK[s.sc.lm]()}</g></svg></div>
+    <div class="ly ly-near" data-depth="-.12"><svg class="near" viewBox="0 0 400 80" preserveAspectRatio="xMidYMin slice" aria-hidden="true">${NEAR(s.sc.near,rnd)}</svg></div>
+    <div class="poster gut" data-depth=".45"><span class="loc">${s.local}</span><span class="when">${whenTxt}</span><span class="here" hidden>Laura está acá</span></div>
+  </div>
+  <div class="ticket gut">
+    <div class="t-top"><span>Parada ${pad(i+1)} de ${N}</span><span class="chip next">Próxima</span></div>
+    <h2>${s.city}</h2>
+    <p class="country">${s.country} · ${shortD(s.start)}${s.end!==s.start?" → "+shortD(s.end):""} · ${days} ${days>1?"días":"día"}</p>
+    <p class="desc">${s.desc}</p>
+    ${s.note?`<p class="note">${s.note}</p>`:""}
+    <h3>Para no perderse</h3>
+    <ul class="hl">${s.hl.map(h=>`<li>${h}</li>`).join("")}</ul>
+    <dl class="facts">
+      <div><dt>Hora local</dt><dd data-clock>--:--</dd><small data-off></small></div>
+      <div><dt data-wt>Clima típico</dt><dd data-wd>${s.clima.max}° / ${String(s.clima.min).replace("-","−")}°</dd><small data-ws>Máx. y mín. de ${s.clima.mes}. ${s.clima.txt}</small></div>
+      <div><dt>Luz del día</dt><dd data-sun>--</dd><small data-sunlen></small></div>
+    </dl>
+  </div>`;
+  stopsEl.appendChild(el);
+  s.el=el;s.clock=el.querySelector("[data-clock]");s.off=el.querySelector("[data-off]");
+  s.chip=el.querySelector(".chip");s.here=el.querySelector(".here");
+  s.wt=el.querySelector("[data-wt]");s.wd=el.querySelector("[data-wd]");s.ws=el.querySelector("[data-ws]");s.sunEl=el.querySelector("[data-sun]");s.sunLen=el.querySelector("[data-sunlen]");
+  s.layers=[...el.querySelectorAll("[data-depth]")].map(n=>({n,d:+n.dataset.depth}));
+  s.scene=el.querySelector(".scene");
+});
+
+/* Portada: datos y recorrido */
+const first=ITINERARIO[0],last=ITINERARIO[N-1];
+const totalDays=(parseD(last.end)-parseD(first.start))/DAY+1;
+const cities=new Set(ITINERARIO.slice(1,-1).map(s=>s.city)).size;
+document.getElementById("stats").innerHTML=`<span><b>${totalDays}</b>días</span><span><b>${cities}</b>ciudades</span><span><b>8</b>países</span><span><b>${N}</b>paradas</span>`;
+const routeEl=document.getElementById("route");
+ITINERARIO.forEach(s=>{
+  const li=document.createElement("li");
+  li.innerHTML=`<a href="#${s.id}"><span class="rd">${shortD(s.start)}${s.end!==s.start?"–"+s.end.slice(8):""}</span><span class="rc">${s.city}</span><span class="rk">${s.country.split(" · ")[0]}</span></a>`;
+  routeEl.appendChild(li);s.li=li;
+});
+
+/* ================== Estado del viaje ================== */
+function currentIndex(d){
+  let idx=-1;
+  ITINERARIO.forEach((s,i)=>{const t=dateIn(s.tz,d);if(t>=s.start&&t<=s.end)idx=i});
+  return idx;
+}
+const startMs=Date.parse(SALIDA);
+const endMs=parseD(last.end)+DAY+3*3600e3;
+const $id=x=>document.getElementById(x);
+const bar={label:$id("barLabel"),main:$id("barMain"),sub:$id("barSub"),btn:$id("barBtn"),prog:$id("barProg")};
+let lastIdx=null,lastSunKey="";
+
+function update(){
+  const d=now(),t=d.getTime();
+  const idx=t<startMs?-1:currentIndex(d);
+  const cordH=timeIn(CORDOBA_TZ,d);
+
+  // Barra superior
+  if(t<startMs){
+    let r=Math.max(0,startMs-t);const D=Math.floor(r/DAY);r-=D*DAY;const H=Math.floor(r/36e5);r-=H*36e5;const M=Math.floor(r/6e4);const S=Math.floor((r-M*6e4)/1e3);
+    bar.label.textContent="Laura despega en";
+    bar.main.innerHTML=`<span class="cd"><span>${D}<i>d</i></span><span>${pad(H)}<i>h</i></span><span>${pad(M)}<i>m</i></span><span>${pad(S)}<i>s</i></span></span>`;
+    bar.sub.textContent="Sale de Córdoba el 25 de noviembre";
+    if(bar.btn.getAttribute("href")!=="#itinerario"){bar.btn.href="#itinerario";bar.btn.textContent="Ver recorrido"}
+    bar.prog.style.width="0%";
+  }else if(t>endMs||idx<0){
+    bar.label.textContent="El viaje terminó";
+    bar.main.textContent="Laura volvió a Córdoba";
+    bar.sub.textContent=`Hora en Córdoba ${cordH}`;
+    bar.btn.href="#itinerario";bar.btn.textContent="Ver recorrido";
+    bar.prog.style.width="100%";
+  }else{
+    const s=ITINERARIO[idx];
+    bar.label.textContent=`Ahora Laura está en`;
+    bar.main.textContent=`${s.city} · ${timeIn(s.tz,d)}`;
+    bar.sub.textContent=`Allá ${timeIn(s.tz,d)} · Córdoba ${cordH} · `+(s.now?`${s.now.t}° ${s.now.txt.toLowerCase()}`:`típico ${s.clima.max}°/${String(s.clima.min).replace("-","−")}°`);
+    if(bar.btn.getAttribute("href")!=="#"+s.id){bar.btn.href="#"+s.id;bar.btn.textContent="Ir a "+s.city.split(" ")[0]}
+    bar.prog.style.width=Math.min(100,(t-startMs)/(endMs-startMs)*100).toFixed(1)+"%";
+  }
+
+  // Relojes y estado de cada parada
+  ITINERARIO.forEach((s,i)=>{
+    s.clock.textContent=timeIn(s.tz,d);
+    const off=offsetH(s.tz,d),diff=off-offsetH(CORDOBA_TZ,d);
+    s.off.textContent=`UTC${off>=0?"+":""}${off} · ${diff===0?"misma hora que Córdoba":(diff>0?diff+" h más":-diff+" h menos")+" que Córdoba"}`;
+  });
+  if(idx!==lastIdx){
+    const today=dateIn("Europe/Berlin",d);
+    ITINERARIO.forEach((s,i)=>{
+      const state=i===idx?"now":(idx>=0&&i<idx)||(idx<0&&t>endMs)||(s.end<today&&t>=startMs)?"past":"next";
+      s.chip.className="chip "+state;s.chip.textContent=state==="now"?"Ahora":state==="past"?"Ya pasó":"Próxima";
+      s.here.hidden=state!=="now";
+      s.li.className=state==="now"?"is-now":state==="past"?"is-past":"";
+      if(state==="now")s.li.querySelector(".rk").textContent="Ahora";
+      else s.li.querySelector(".rk").textContent=s.country.split(" · ")[0];
+    });
+    lastIdx=idx;
+  }
+  // Luz del día (por fecha)
+  const sunKey=dateIn("Europe/Berlin",d);
+  if(sunKey!==lastSunKey){
+    ITINERARIO.forEach(s=>{
+      const day=sunKey<s.start?s.start:sunKey>s.end?s.end:sunKey;
+      const st=sun(day,s.lat,s.lon);
+      s.sunEl.textContent=`${timeIn(s.tz,st.rise)}–${timeIn(s.tz,st.set)}`;
+      const h=Math.floor(st.len),mi=Math.round((st.len-h)*60);
+      s.sunLen.textContent=`${h} h ${pad(mi)} min de sol el ${shortD(day)}`;
+    });
+    lastSunKey=sunKey;
+  }
+}
+update();
+setInterval(update,1000);
+
+/* ================== Clima en vivo (Open-Meteo) ================== */
+const WMO={0:"Despejado",1:"Mayormente despejado",2:"Parcialmente nublado",3:"Nublado",45:"Niebla",48:"Niebla con escarcha",51:"Llovizna leve",53:"Llovizna",55:"Llovizna intensa",56:"Llovizna helada",57:"Llovizna helada",61:"Lluvia leve",63:"Lluvia",65:"Lluvia fuerte",66:"Lluvia helada",67:"Lluvia helada",71:"Nieve leve",73:"Nieve",75:"Nevada fuerte",77:"Granizo fino",80:"Chaparrones",81:"Chaparrones",82:"Chaparrones fuertes",85:"Chaparrones de nieve",86:"Nevada fuerte",95:"Tormenta",96:"Tormenta con granizo",99:"Tormenta con granizo"};
+const deg=n=>String(Math.round(n)).replace("-","−");
+async function loadWeather(){
+  try{
+    const lat=ITINERARIO.map(s=>s.lat).join(","),lon=ITINERARIO.map(s=>s.lon).join(",");
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,weather_code&timezone=auto&forecast_days=16`;
+    const r=await fetch(url);if(!r.ok)throw new Error(r.status);
+    let data=await r.json();if(!Array.isArray(data))data=[data];
+    const d=now();
+    ITINERARIO.forEach((s,i)=>{
+      const w=data[i];if(!w||!w.daily)return;
+      const today=dateIn(s.tz,d);
+      const inTrip=today>=s.start&&today<=s.end;
+      const day=inTrip?today:s.start;
+      const k=w.daily.time.indexOf(day);
+      if(inTrip&&w.current){
+        s.now={t:deg(w.current.temperature_2m),txt:WMO[w.current.weather_code]||""};
+        s.wt.textContent="Clima ahora";
+        s.wd.textContent=`${s.now.t}°`;
+        s.ws.textContent=`${s.now.txt}`+(k>=0?` · hoy máx. ${deg(w.daily.temperature_2m_max[k])}° / mín. ${deg(w.daily.temperature_2m_min[k])}°`:"");
+      }else if(k>=0){
+        s.wt.textContent="Pronóstico";
+        s.wd.textContent=`${deg(w.daily.temperature_2m_max[k])}° / ${deg(w.daily.temperature_2m_min[k])}°`;
+        s.ws.textContent=`Para el ${shortD(day)}: ${(WMO[w.daily.weather_code[k]]||"").toLowerCase()}`;
+      }
+    });
+    update();
+  }catch(e){/* sin conexión: queda el clima típico */}
+}
+if(!SIM)loadWeather();
+setInterval(()=>{if(!SIM)loadWeather()},30*60e3);
+
+/* Si el viaje ya empezó, ir a donde está Laura */
+(function(){
+  const idx=lastIdx;
+  if(idx>=0&&!/^#parada-/.test(location.hash)){
+    const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setTimeout(()=>{const s=ITINERARIO[idx];const y=s.el.getBoundingClientRect().top+scrollY-document.getElementById("bar").offsetHeight;window.scrollTo({top:y,behavior:reduce?"auto":"smooth"})},700);
+  }
+})();
+document.addEventListener("click",e=>{const a=e.target.closest('a[href^="#"]');if(!a)return;const t=document.querySelector(a.getAttribute("href"));if(!t)return;e.preventDefault();
+  const y=t.getBoundingClientRect().top+scrollY-document.getElementById("bar").offsetHeight;window.scrollTo({top:y,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})});
+
+/* ================== Parallax + nieve ================== */
+const reduceMotion=matchMedia("(prefers-reduced-motion: reduce)");
+const cv=document.getElementById("snow"),cx=cv.getContext("2d");
+let flakes=[],W=0,H=0;
+function resize(){const dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;cx.setTransform(dpr,0,0,dpr,0,0);
+  flakes=[...Array(Math.round(W/9))].map(()=>({x:Math.random()*W,y:Math.random()*H,r:.8+Math.random()*2.2,v:.3+Math.random()*.9,o:Math.random()*6}))}
+resize();addEventListener("resize",resize);
+let tick=0;
+function frame(){
+  const vh=innerHeight,move=!reduceMotion.matches,amp=Math.min(140,vh*.16);
+  const snowRects=[];
+  ITINERARIO.forEach(s=>{
+    const r=s.scene.getBoundingClientRect();
+    if(r.bottom<0||r.top>vh)return;
+    if(s.sc.snow)snowRects.push(r);
+    if(!move)return;
+    const p=Math.max(-1,Math.min(1,(r.top+r.height/2-vh/2)/vh));
+    s.layers.forEach(l=>l.n.style.transform=`translate3d(0,${(-p*l.d*amp).toFixed(1)}px,0)`);
+  });
+  cx.clearRect(0,0,W,H);
+  if(move&&snowRects.length){
+    tick+=.01;cx.save();cx.beginPath();snowRects.forEach(r=>cx.rect(r.left,r.top,r.width,r.height));cx.clip();
+    cx.fillStyle="rgba(255,255,255,.85)";
+    flakes.forEach(f=>{f.y+=f.v;f.x+=Math.sin(tick*2+f.o)*.4;if(f.y>H){f.y=-4;f.x=Math.random()*W}cx.beginPath();cx.arc(f.x,f.y,f.r,0,6.283);cx.fill()});
+    cx.restore();
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+
+</body>
+</html>
