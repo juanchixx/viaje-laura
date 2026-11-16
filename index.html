@@ -109,6 +109,21 @@ a{color:inherit}
 .hl{margin:0 0 20px;padding:0;list-style:none;display:grid;gap:6px}
 .hl li{display:grid;grid-template-columns:18px 1fr;gap:6px}
 .hl li::before{content:"";width:8px;height:8px;margin-top:.55em;background:var(--accent);transform:rotate(45deg)}
+.flights{display:grid;gap:10px;margin:0 0 20px}
+.fl{display:grid;grid-template-columns:1fr auto 1fr;gap:4px 10px;align-items:end;padding:12px;border:1.5px solid var(--line);border-radius:6px}
+.fl-h{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.fl-h b{color:var(--ink);font-weight:600;letter-spacing:.04em}
+.fl-st{padding:2px 7px;border:1.5px solid currentColor;border-radius:3px;font-weight:600;text-transform:uppercase;font-size:11px}
+.fl-st.air{color:var(--now)} .fl-st.done{color:var(--muted)} .fl-st.sched{color:var(--accent)}
+.fl-p{min-width:0}
+.fl-p.to{text-align:right}
+.fl-code,.fl-t{display:block}
+.fl-code{font-family:var(--display);font-weight:800;font-size:34px;line-height:1}
+.fl-t{font-family:var(--display);font-weight:800;font-size:22px;font-variant-numeric:tabular-nums}
+.fl-n{display:block;font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.35}
+.fl-mid{font-family:var(--mono);font-size:11px;color:var(--muted);text-align:center;padding-bottom:22px;white-space:nowrap}
+.fl-mid::before{content:"✈";display:block;font-size:18px;color:var(--ink)}
+.fl-c{grid-column:1/-1;font-family:var(--mono);font-size:11px;color:var(--muted)}
 .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0;margin:0;border-top:1.5px dashed var(--line)}
 .facts>div{padding:12px 10px 4px 0;min-width:0}
 .facts dt{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
@@ -154,19 +169,25 @@ footer{max-width:760px;margin:0 auto;padding-block:40px 60px;font-family:var(--m
 /* ================== ITINERARIO (editar acá) ==================
    start/end: fechas en formato AAAA-MM-DD (incluidas).
    tz: zona horaria de la ciudad. clima: promedio típico del mes. */
-const SALIDA = "2026-11-25T00:00:00-03:00"; // hora de salida desde Córdoba
+const SALIDA = "2026-11-25T12:50:00-03:00"; // hora de salida desde Córdoba
 const CORDOBA_TZ = "America/Argentina/Cordoba";
+
+/* Vuelos: horarios locales con su diferencia horaria. */
+const VUELOS = [
+ {num:"UX122",airline:"Air Europa",from:"COR",fromName:"Córdoba (Pajas Blancas)",to:"MAD",toName:"Madrid-Barajas",dep:"2026-11-25T12:50:00-03:00",arr:"2026-11-26T04:45:00+01:00",depTz:CORDOBA_TZ,arrTz:"Europe/Madrid"},
+ {num:"UX1503",airline:"Air Europa",from:"MAD",fromName:"Madrid-Barajas, T2",to:"FRA",toName:"Frankfurt",dep:"2026-11-26T07:00:00+01:00",arr:"2026-11-26T09:45:00+01:00",depTz:"Europe/Madrid",arrTz:"Europe/Berlin"}
+];
 
 const ITINERARIO = [
  {start:"2026-11-25",end:"2026-11-25",city:"Córdoba → Frankfurt",local:"Despegue",country:"Argentina · escala en Madrid",tz:CORDOBA_TZ,lat:-31.42,lon:-64.18,
-  desc:"Laura sale desde Córdoba, hace escala en Madrid y cruza el Atlántico hasta Frankfurt. Al llegar, el reloj se adelanta cuatro horas.",
-  hl:["Escala en Madrid-Barajas","Llegada a Frankfurt (FRA), el aeropuerto más grande de Alemania","Europa va 4 h adelantada respecto de Córdoba"],
+  desc:"Laura sale de Córdoba al mediodía, cruza el Atlántico de noche hasta Madrid y a la mañana siguiente llega a Frankfurt. Al bajar del avión, el reloj se adelanta cuatro horas.",
+  hl:["Casi 12 horas de vuelo hasta Madrid","Escala de 2 h 15 min en Barajas","Llegada a Frankfurt el jueves 26 a las 9:45"],vuelos:true,
   clima:{mes:"noviembre",max:29,min:16,txt:"Calor de fin de primavera"},
   sc:{pal:["#3a2a6b","#f2a271","#b9675a","#4a2338","#2b1424","#ffe1a1","#fff6ea"],far:"sierras",near:"ground",cel:"plane",lm:"cordoba"}},
  {start:"2026-11-26",end:"2026-11-26",city:"Frankfurt",local:"Frankfurt",country:"Alemania",tz:"Europe/Berlin",lat:50.11,lon:8.68,
   desc:"La ciudad de los rascacielos de Alemania, sobre el río Meno, con un casco antiguo reconstruido entre torres de vidrio. Para estas fechas ya está abierto el mercado navideño del Römerberg.",
   hl:["Römerberg y sus casas de frontón","Catedral imperial (Kaiserdom)","Puente de hierro (Eiserner Steg)","Mercado navideño del Römerberg"],
-  note:"A la noche, capaz cena en Mainz con Marina.",
+  note:"Llega a Frankfurt a las 9:45. A la noche, capaz cena en Mainz con Marina.",
   clima:{mes:"noviembre",max:8,min:2,txt:"Gris y fresco, llueve seguido"},
   sc:{pal:["#1e2c57","#e9896a","#4c4c7c","#1f2246","#121430","#ffd27a","#fff3e6"],far:"city",near:"river",cel:"sun",lm:"frankfurt"}},
  {start:"2026-11-27",end:"2026-11-27",city:"Heidelberg",local:"Heidelberg",country:"Alemania",tz:"Europe/Berlin",lat:49.41,lon:8.69,
@@ -432,6 +453,28 @@ function CEL(type,rnd){
   return s;
 }
 
+/* ================== Vuelos ================== */
+const dur=ms=>{const m=Math.round(ms/6e4);return `${Math.floor(m/60)} h ${pad(m%60)} min`};
+const dayName=(tz,d)=>fmt(tz,{weekday:"short",day:"numeric",month:"short"}).format(d).replace(/\./g,"");
+VUELOS.forEach(v=>{v.depMs=Date.parse(v.dep);v.arrMs=Date.parse(v.arr)});
+function flightHTML(v,i){
+  const dd=new Date(v.depMs),ad=new Date(v.arrMs);
+  return `<div class="fl">
+    <div class="fl-h"><span><b>${v.num}</b> · ${v.airline}</span><span class="fl-st sched" data-fl="${i}">Programado</span></div>
+    <div class="fl-p"><span class="fl-code">${v.from}</span><span class="fl-t">${timeIn(v.depTz,dd)}</span><span class="fl-n">${dayName(v.depTz,dd)}<br>${v.fromName}</span></div>
+    <div class="fl-mid">${dur(v.arrMs-v.depMs)}</div>
+    <div class="fl-p to"><span class="fl-code">${v.to}</span><span class="fl-t">${timeIn(v.arrTz,ad)}</span><span class="fl-n">${dayName(v.arrTz,ad)}<br>${v.toName}</span></div>
+    <div class="fl-c">En Córdoba: sale ${timeIn(CORDOBA_TZ,dd)}, llega ${timeIn(CORDOBA_TZ,ad)} (${dayName(CORDOBA_TZ,ad)}). Horarios locales.</div>
+  </div>`;
+}
+/* Fase de viaje en avión: {kind:"air"|"layover", v, next} o null */
+function flightPhase(t){
+  for(let i=0;i<VUELOS.length;i++){const v=VUELOS[i];
+    if(t>=v.depMs&&t<v.arrMs)return{kind:"air",v};
+    const n=VUELOS[i+1];if(n&&t>=v.arrMs&&t<n.depMs)return{kind:"layover",v,next:n};}
+  return null;
+}
+
 /* ================== Render ================== */
 const stopsEl=document.getElementById("stops");
 const N=ITINERARIO.length;
@@ -461,6 +504,7 @@ ITINERARIO.forEach((s,i)=>{
     ${s.note?`<p class="note">${s.note}</p>`:""}
     <h3>Para no perderse</h3>
     <ul class="hl">${s.hl.map(h=>`<li>${h}</li>`).join("")}</ul>
+    ${s.vuelos?`<h3>Vuelos</h3><div class="flights">${VUELOS.map(flightHTML).join("")}</div>`:""}
     <dl class="facts">
       <div><dt>Hora local</dt><dd data-clock>--:--</dd><small data-off></small></div>
       <div><dt data-wt>Clima típico</dt><dd data-wd>${s.clima.max}° / ${String(s.clima.min).replace("-","−")}°</dd><small data-ws>Máx. y mín. de ${s.clima.mes}. ${s.clima.txt}</small></div>
@@ -501,7 +545,8 @@ let lastIdx=null,lastSunKey="";
 
 function update(){
   const d=now(),t=d.getTime();
-  const idx=t<startMs?-1:currentIndex(d);
+  const phase=flightPhase(t);
+  const idx=t<startMs?-1:phase?0:currentIndex(d);
   const cordH=timeIn(CORDOBA_TZ,d);
 
   // Barra superior
@@ -509,9 +554,23 @@ function update(){
     let r=Math.max(0,startMs-t);const D=Math.floor(r/DAY);r-=D*DAY;const H=Math.floor(r/36e5);r-=H*36e5;const M=Math.floor(r/6e4);const S=Math.floor((r-M*6e4)/1e3);
     bar.label.textContent="Laura despega en";
     bar.main.innerHTML=`<span class="cd"><span>${D}<i>d</i></span><span>${pad(H)}<i>h</i></span><span>${pad(M)}<i>m</i></span><span>${pad(S)}<i>s</i></span></span>`;
-    bar.sub.textContent="Sale de Córdoba el 25 de noviembre";
+    bar.sub.textContent=`Sale de Córdoba el miércoles 25 a las ${timeIn(CORDOBA_TZ,new Date(startMs))} · ${VUELOS[0].num}`;
     if(bar.btn.getAttribute("href")!=="#itinerario"){bar.btn.href="#itinerario";bar.btn.textContent="Ver recorrido"}
     bar.prog.style.width="0%";
+  }else if(phase){
+    const v=phase.v,s=ITINERARIO[0];
+    if(phase.kind==="air"){
+      bar.label.textContent="Laura está volando";
+      bar.main.textContent=`${v.from} → ${v.to} · ${v.num}`;
+      bar.sub.textContent=`Llega ${timeIn(v.arrTz,new Date(v.arrMs))} hora local (${timeIn(CORDOBA_TZ,new Date(v.arrMs))} en Córdoba) · faltan ${dur(v.arrMs-t)}`;
+    }else{
+      const n=phase.next;
+      bar.label.textContent="Laura está en escala";
+      bar.main.textContent=`${v.toName.split(",")[0]} · ${timeIn(v.arrTz,d)}`;
+      bar.sub.textContent=`${n.num} a ${n.toName} sale ${timeIn(n.depTz,new Date(n.depMs))} (${timeIn(CORDOBA_TZ,new Date(n.depMs))} en Córdoba)`;
+    }
+    if(bar.btn.getAttribute("href")!=="#"+s.id){bar.btn.href="#"+s.id;bar.btn.textContent="Ver vuelos"}
+    bar.prog.style.width=Math.min(100,(t-startMs)/(endMs-startMs)*100).toFixed(1)+"%";
   }else if(t>endMs||idx<0){
     bar.label.textContent="El viaje terminó";
     bar.main.textContent="Laura volvió a Córdoba";
@@ -526,6 +585,10 @@ function update(){
     if(bar.btn.getAttribute("href")!=="#"+s.id){bar.btn.href="#"+s.id;bar.btn.textContent="Ir a "+s.city.split(" ")[0]}
     bar.prog.style.width=Math.min(100,(t-startMs)/(endMs-startMs)*100).toFixed(1)+"%";
   }
+
+  document.querySelectorAll("[data-fl]").forEach(el=>{const v=VUELOS[+el.dataset.fl];
+    const st=t<v.depMs?["sched","Programado"]:t<v.arrMs?["air","En vuelo"]:["done","Aterrizó"];
+    if(el.textContent!==st[1]){el.className="fl-st "+st[0];el.textContent=st[1]}});
 
   // Relojes y estado de cada parada
   ITINERARIO.forEach((s,i)=>{
