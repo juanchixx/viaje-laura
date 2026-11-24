@@ -131,6 +131,21 @@ a{color:inherit}
 .facts small{display:block;font-family:var(--mono);font-size:11.5px;color:var(--muted);line-height:1.4}
 
 footer{max-width:760px;margin:0 auto;padding-block:40px 60px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+/* Oveja viajera */
+.sheep-w{position:absolute;left:12px;bottom:6%;z-index:2;width:clamp(78px,21vw,128px);will-change:transform;pointer-events:none}
+.sheep{display:block;width:100%;height:auto;overflow:visible}
+.sheep .wo{fill:#cfc3a6;stroke:#cfc3a6;stroke-width:3}
+.sheep .wf{fill:#f8f1df}
+.sheep .lg{fill:#6b5240;transform-box:fill-box;transform-origin:50% 0}
+.sheep .hair{fill:#3d2419} .sheep .skin{fill:#e9b892} .sheep .eye{fill:#2a1a12} .sheep .cheek{fill:#f08f86;opacity:.55}
+.sheep .smile{fill:none;stroke:#2a1a12;stroke-width:1.3;stroke-linecap:round}
+.sheep-w.flip .sheep{transform:scaleX(-1)}
+@media (prefers-reduced-motion:no-preference){
+ .sheep-w.walk .lg.a{animation:leg .36s ease-in-out infinite alternate}
+ .sheep-w.walk .lg.b{animation:leg .36s ease-in-out infinite alternate-reverse}
+ .sheep-w.walk .sh-body,.sheep-w.walk .sh-head{animation:bob .36s ease-in-out infinite alternate}}
+@keyframes leg{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
+@keyframes bob{from{transform:translateY(0)}to{transform:translateY(-2px)}}
 /* Mini mapa fijo */
 .mm{position:fixed;right:calc(12px + env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:15;width:132px;height:106px;padding:0;border:2px solid var(--ink);border-radius:10px;overflow:hidden;background:var(--sea);box-shadow:0 10px 24px -12px rgba(10,12,30,.55);cursor:pointer;transition:width .25s,height .25s}
 .mm.big{width:min(320px,calc(100vw - 24px));height:230px}
@@ -517,6 +532,7 @@ ITINERARIO.forEach((s,i)=>{
     <div class="ly ly-far" data-depth=".55"><svg class="far" viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true">${FAR(s.sc.far,rnd)}</svg></div>
     <div class="ly ly-lm" data-depth=".25"><svg class="lm" viewBox="0 0 400 300" preserveAspectRatio="xMidYMax meet" role="img" aria-label="Ilustración de ${s.city}"><g transform="translate(0 100)">${LANDMARK[s.sc.lm]()}</g></svg></div>
     <div class="ly ly-near" data-depth="-.12"><svg class="near" viewBox="0 0 400 80" preserveAspectRatio="xMidYMin slice" aria-hidden="true">${NEAR(s.sc.near,rnd)}</svg></div>
+    <div class="sheep-w" aria-hidden="true"><svg class="sheep" viewBox="0 0 124 92" aria-hidden="true"><g class="sh-legs"><rect class="lg a" x="28" y="62" width="5" height="22" rx="2"/><rect class="lg b" x="40" y="62" width="5" height="22" rx="2"/><rect class="lg b" x="62" y="62" width="5" height="22" rx="2"/><rect class="lg a" x="74" y="62" width="5" height="22" rx="2"/></g><g class="sh-body"><circle cx="92.0" cy="46.0" r="9.5" class="wo"/><circle cx="89.0" cy="55.6" r="9.5" class="wo"/><circle cx="80.3" cy="63.7" r="9.5" class="wo"/><circle cx="67.3" cy="69.1" r="9.5" class="wo"/><circle cx="52.0" cy="71.0" r="9.5" class="wo"/><circle cx="36.7" cy="69.1" r="9.5" class="wo"/><circle cx="23.7" cy="63.7" r="9.5" class="wo"/><circle cx="15.0" cy="55.6" r="9.5" class="wo"/><circle cx="12.0" cy="46.0" r="9.5" class="wo"/><circle cx="15.0" cy="36.4" r="9.5" class="wo"/><circle cx="23.7" cy="28.3" r="9.5" class="wo"/><circle cx="36.7" cy="22.9" r="9.5" class="wo"/><circle cx="52.0" cy="21.0" r="9.5" class="wo"/><circle cx="67.3" cy="22.9" r="9.5" class="wo"/><circle cx="80.3" cy="28.3" r="9.5" class="wo"/><circle cx="89.0" cy="36.4" r="9.5" class="wo"/><ellipse cx="52" cy="46" rx="40" ry="25" class="wf"/><circle cx="92.0" cy="46.0" r="9.5" class="wf"/><circle cx="89.0" cy="55.6" r="9.5" class="wf"/><circle cx="80.3" cy="63.7" r="9.5" class="wf"/><circle cx="67.3" cy="69.1" r="9.5" class="wf"/><circle cx="52.0" cy="71.0" r="9.5" class="wf"/><circle cx="36.7" cy="69.1" r="9.5" class="wf"/><circle cx="23.7" cy="63.7" r="9.5" class="wf"/><circle cx="15.0" cy="55.6" r="9.5" class="wf"/><circle cx="12.0" cy="46.0" r="9.5" class="wf"/><circle cx="15.0" cy="36.4" r="9.5" class="wf"/><circle cx="23.7" cy="28.3" r="9.5" class="wf"/><circle cx="36.7" cy="22.9" r="9.5" class="wf"/><circle cx="52.0" cy="21.0" r="9.5" class="wf"/><circle cx="67.3" cy="22.9" r="9.5" class="wf"/><circle cx="80.3" cy="28.3" r="9.5" class="wf"/><circle cx="89.0" cy="36.4" r="9.5" class="wf"/></g><g class="sh-head"><circle cx="98" cy="40" r="15" class="hair"/><ellipse cx="98" cy="42" rx="10.5" ry="12.5" class="skin"/><circle cx="91.0" cy="20.0" r="6" class="wo"/><circle cx="98.0" cy="16.0" r="7" class="wo"/><circle cx="105.0" cy="20.0" r="6" class="wo"/><circle cx="98.0" cy="24.0" r="6" class="wo"/><circle cx="91.0" cy="20.0" r="6" class="wf"/><circle cx="98.0" cy="16.0" r="7" class="wf"/><circle cx="105.0" cy="20.0" r="6" class="wf"/><circle cx="98.0" cy="24.0" r="6" class="wf"/><circle cx="94" cy="41" r="1.6" class="eye"/><circle cx="102" cy="41" r="1.6" class="eye"/><circle cx="91.5" cy="46" r="2.2" class="cheek"/><circle cx="104.5" cy="46" r="2.2" class="cheek"/><path d="M94.5 47.5Q98 51.5 101.5 47.5" class="smile"/></g></svg></div>
     <div class="poster gut" data-depth=".45"><span class="loc">${s.local}</span><span class="when">${whenTxt}</span><span class="here" hidden>Laura está acá</span></div>
   </div>
   <div class="ticket gut">
@@ -540,6 +556,7 @@ ITINERARIO.forEach((s,i)=>{
   s.wt=el.querySelector("[data-wt]");s.wd=el.querySelector("[data-wd]");s.ws=el.querySelector("[data-ws]");s.sunEl=el.querySelector("[data-sun]");s.sunLen=el.querySelector("[data-sunlen]");
   s.layers=[...el.querySelectorAll("[data-depth]")].map(n=>({n,d:+n.dataset.depth}));
   s.scene=el.querySelector(".scene");
+  s.sheep=el.querySelector(".sheep-w");
 });
 
 /* Portada: datos y recorrido */
@@ -751,6 +768,10 @@ function resize(){const dpr=Math.min(2,devicePixelRatio||1);W=innerWidth;H=inner
   flakes=[...Array(Math.round(W/9))].map(()=>({x:Math.random()*W,y:Math.random()*H,r:.8+Math.random()*2.2,v:.3+Math.random()*.9,o:Math.random()*6}))}
 resize();addEventListener("resize",resize);
 let tick=0;
+let lastY=scrollY,walkT=0;
+addEventListener("scroll",()=>{const dy=scrollY-lastY;lastY=scrollY;if(!dy)return;
+  document.querySelectorAll(".sheep-w").forEach(e=>{e.classList.add("walk");e.classList.toggle("flip",dy<0)});
+  clearTimeout(walkT);walkT=setTimeout(()=>document.querySelectorAll(".sheep-w.walk").forEach(e=>e.classList.remove("walk")),180)},{passive:true});
 function frame(){
   updateMap();
   const vh=innerHeight,move=!reduceMotion.matches,amp=Math.min(140,vh*.16);
@@ -761,6 +782,8 @@ function frame(){
     if(s.sc.snow)snowRects.push(r);
     if(!move)return;
     const p=Math.max(-1,Math.min(1,(r.top+r.height/2-vh/2)/vh));
+    const q=(1-p)/2,sw=s.sheep.offsetWidth;
+    s.sheep.style.transform=`translate3d(${(q*(r.width-sw-24)).toFixed(1)}px,0,0)`;
     s.layers.forEach(l=>l.n.style.transform=`translate3d(0,${(-p*l.d*amp).toFixed(1)}px,0)`);
   });
   cx.clearRect(0,0,W,H);
