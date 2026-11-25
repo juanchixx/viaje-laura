@@ -58,7 +58,7 @@ a{color:inherit}
 .stats b{font-family:var(--display);font-size:30px;font-weight:800;display:block;line-height:1}
 .route{list-style:none;margin:0;padding:0;border-top:2px solid var(--ink)}
 .route li{border-bottom:1px solid var(--line)}
-.route a{display:grid;grid-template-columns:5.6em 1fr auto;gap:10px;align-items:baseline;padding:10px 2px;text-decoration:none}
+.route a{display:grid;grid-template-columns:8.4em 1fr auto;gap:10px;align-items:baseline;padding:10px 2px;text-decoration:none}
 .route a:hover .rc{color:var(--accent)}
 .rd{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
 .rc{font-family:var(--display);font-weight:800;font-size:22px;line-height:1.1;text-transform:uppercase;min-width:0}
@@ -126,7 +126,9 @@ a{color:inherit}
 .fl-c{grid-column:1/-1;font-family:var(--mono);font-size:11px;color:var(--muted)}
 .stay{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:baseline;margin:0 0 18px;padding:10px 12px;background:color-mix(in srgb,var(--ink) 5%,transparent);border-radius:6px}
 .stay dt{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.stay dd{margin:0;font-weight:600;min-width:0} .stay dd small{display:block;font-weight:400;color:var(--muted);font-size:14px}
+.stay dd{margin:0;font-weight:600;min-width:0} .ag-list a,.stay a{color:inherit;text-decoration-color:color-mix(in srgb,var(--accent) 60%,transparent);text-underline-offset:3px}
+.ext{font-family:var(--mono);font-size:11px;color:var(--accent);white-space:nowrap}
+.stay dd small{display:block;font-weight:400;color:var(--muted);font-size:14px}
 .agenda{margin:0 0 20px;display:grid;gap:12px}
 .ag-day{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);margin:0 0 4px}
 .ag-list{list-style:none;margin:0;padding:0 0 0 12px;border-left:2px solid var(--line);display:grid;gap:4px}
@@ -319,38 +321,56 @@ const ITINERARIO = [
   hl:["Sagrada Familia","Park Güell","Barrio Gótico","La Barceloneta y el mar"],
   clima:{mes:"enero",max:14,min:6,txt:"Soleado y templado"},
   sc:{pal:["#78c3e6","#f8e2b2","#dfa678","#9e573a","#2f7da6","#fff4d0","#2a1a12"],far:"hills",near:"sea",cel:"sun",lm:"barcelona"}},
- {start:"2027-01-06",end:"2027-01-06",city:"Barcelona → Córdoba",local:"Regreso",country:"España · escala en Bogotá",tz:"Europe/Madrid",lat:41.39,lon:2.17,
+ {start:"2027-01-06",end:"2027-01-07",city:"Barcelona → Córdoba",local:"Regreso",country:"España · escala en Bogotá",tz:"Europe/Madrid",lat:41.39,lon:2.17,
   desc:"Vuelta a casa con escala en Bogotá. En Córdoba la espera el verano.",
   hl:["Salida desde Barcelona-El Prat","Escala en Bogotá (El Dorado)","Llegada a Córdoba"],
   clima:{mes:"enero en Córdoba",max:31,min:17,txt:"Pleno verano"},
   sc:{pal:["#3f74cc","#bcd8f2","#ffffff","#24406e","#ffffff","#fff4d0","#ffffff"],far:"clouds",near:"clouds",cel:"plane",lm:"none"}}
 ];
 
-/* Detalles por parada (alojamiento y agenda), por fecha de inicio. */
+/* Detalles por parada (alojamiento y agenda), por fecha de inicio.
+   Cada ítem de agenda: [hora, texto, enlace al mapa (opcional)]. */
+const G="https://maps.app.goo.gl/";
 const DETALLES = {
- "2026-11-26":{aloja:{nombre:"JC&Blue Hostel",zona:"junto a la estación central (Hauptbahnhof)"},
-   agenda:[{dia:"26/11",items:[["09:45","Llega al aeropuerto de Frankfurt"]]}]},
- "2026-11-27":{aloja:{nombre:"JC&Blue Hostel",zona:"vuelve a dormir a Frankfurt"},
-   agenda:[{dia:"27/11",items:[["08:30","Micro desde Frankfurt (ruta 476)"],["09:30","Llega a Heidelberg"],["14:30","Free walking tour"],["21:40","Micro de vuelta (ruta 107)"],["22:45","De vuelta en Frankfurt"]]}]},
- "2026-11-28":{aloja:{nombre:"JC&Blue Hostel",zona:"Frankfurt"}},
- "2026-11-29":{aloja:{nombre:"JC&Blue Hostel",zona:"vuelve a dormir a Frankfurt"},
-   agenda:[{dia:"29/11",items:[["06:53","Tren ICE 9568 desde la estación central de Frankfurt"],["08:47","Llega a Estrasburgo"],["10:00","Free walking tour"],["20:45","Micro de vuelta (ruta 108)"],["00:45","De vuelta en Frankfurt"]]}]},
- "2026-11-30":{aloja:{nombre:"JC&Blue Hostel",zona:"junto a la estación central"},
-   agenda:[{dia:"30/11",items:[["10:00","Free walking tour"],["23:45","Micro nocturno a Dresden (ruta N1366)"]]}]},
- "2026-12-01":{aloja:{nombre:"MEININGER Hotel Dresden Zentrum",zona:"junto a la estación central"},
-   agenda:[{dia:"01/12",items:[["06:50","Llega a Dresden"],["11:00","Free walking tour"]]},{dia:"02/12",items:[["","Día libre"]]}]},
- "2026-12-03":{aloja:{nombre:"Hostel Homer",zona:"Ciudad Vieja (Staré Město)"},
-   agenda:[{dia:"03/12",items:[["07:20","FlixBus N69 desde Dresden"],["09:10","Llega a Praga (estación Florenc)"]]},{dia:"04/12",items:[["10:00","Free walking tour desde la Plaza de la Ciudad Vieja"],["00:50","Micro nocturno a Cracovia (ruta N1310), ya el 05/12"]]}]},
+ "2026-11-26":{aloja:{nombre:"JC&Blue Hostel",zona:"junto a la estación central (Hauptbahnhof)",url:G+"HKEQJLFUMiB1EshA8"},
+   agenda:[{dia:"26/11",items:[["09:45","Llega al aeropuerto de Frankfurt","https://www.google.com/maps/search/?api=1&query=Frankfurt+Airport"]]}]},
+ "2026-11-27":{aloja:{nombre:"JC&Blue Hostel",zona:"vuelve a dormir a Frankfurt",url:G+"HKEQJLFUMiB1EshA8"},
+   agenda:[{dia:"27/11",items:[["08:30","Micro desde Frankfurt (ruta 476)",G+"FEMQdxaJp9Vh7fB78"],["09:30","Llega a Heidelberg",G+"Dr2Sxshi1tif9ygg9"],["14:30","Free walking tour",G+"ZEKMZr2GU3YGCAax7"],["21:40","Micro de vuelta (ruta 107)",G+"Dr2Sxshi1tif9ygg9"],["22:45","De vuelta en Frankfurt"]]}]},
+ "2026-11-28":{aloja:{nombre:"JC&Blue Hostel",zona:"Frankfurt",url:G+"HKEQJLFUMiB1EshA8"}},
+ "2026-11-29":{aloja:{nombre:"JC&Blue Hostel",zona:"vuelve a dormir a Frankfurt",url:G+"HKEQJLFUMiB1EshA8"},
+   agenda:[{dia:"29/11",items:[["06:53","Tren ICE 9568 desde la estación central de Frankfurt",G+"5U9WUtrf4x6hmS7m6"],["08:47","Llega a Estrasburgo",G+"FmNZDrfUpQHwJDDw7"],["10:00","Free walking tour",G+"1F9wxYaPvpR3rnNF8"],["20:45","Micro de vuelta (ruta 108)","https://www.google.com/maps?q=48.5741794,7.7542663"],["00:45","De vuelta en Frankfurt","https://www.google.com/maps?q=50.104394,8.662577"]]}]},
+ "2026-11-30":{aloja:{nombre:"JC&Blue Hostel",zona:"junto a la estación central",url:G+"HKEQJLFUMiB1EshA8"},
+   agenda:[{dia:"30/11",items:[["10:00","Free walking tour",G+"FpCwMTNF6i24CPwz8"],["23:45","Micro nocturno a Dresden (ruta N1366)",G+"VSHbQpmHrZjDSRqD9"]]}]},
+ "2026-12-01":{aloja:{nombre:"MEININGER Hotel Dresden Zentrum",zona:"junto a la estación central",url:"https://www.google.com/maps/search/?api=1&query=MEININGER+Hotel+Dresden+Zentrum"},
+   agenda:[{dia:"01/12",items:[["06:50","Llega a Dresden",G+"MovgBtS2MS3ondLa8"],["11:00","Free walking tour",G+"JbaAibHzBzvrNTCA9"]]},{dia:"02/12",items:[["","Día libre"]]}]},
+ "2026-12-03":{aloja:{nombre:"Hostel Homer",zona:"Ciudad Vieja (Staré Město)",url:G+"mPLYSPDXAbbkGrpu9"},
+   agenda:[{dia:"03/12",items:[["07:20","FlixBus N69 desde Dresden",G+"Vw5XDdanxPzRCdPXA"],["09:10","Llega a Praga (estación Florenc)",G+"zEXWq7rGiP5hS8oVA"]]},{dia:"04/12",items:[["10:00","Free walking tour en la Plaza de la Ciudad Vieja",G+"gGBc6DTzx3YJTch86"],["00:50","Micro nocturno a Cracovia (ruta N1310), ya el 05/12","https://www.google.com/maps?q=50.0848337,14.4335873"]]}]},
  "2026-12-05":{aloja:{nombre:"En casa de una amiga",zona:"Cracovia"},
-   agenda:[{dia:"05/12",items:[["08:00","Llega a Cracovia"]]},{dia:"06/12",items:[["","Día libre"]]},{dia:"07/12",items:[["23:15","Micro nocturno a Budapest (ruta N911)"]]}]},
- "2026-12-08":{aloja:{nombre:"Wombat's City Hostel",zona:"barrio judío, distrito VII"},
-   agenda:[{dia:"08/12",items:[["06:31","Llega a Budapest"],["11:00","Free walking tour frente a la Basílica de San Esteban"]]},{dia:"09/12",items:[["","Día libre"]]},{dia:"10/12",items:[["23:05","Micro nocturno a Munich (ruta N965)"]]}]},
- "2026-12-11":{aloja:{nombre:"The 4 You Hostel",zona:"Maxvorstadt, cerca de la estación central"},
-   agenda:[{dia:"11/12",items:[["08:20","Llega a Munich"]]}]}
+   agenda:[{dia:"05/12",items:[["08:00","Llega a Cracovia",G+"3HEKsY8tSdqJ4Qog9"]]},{dia:"06/12",items:[["","Día libre"]]},{dia:"07/12",items:[["23:15","Micro nocturno a Budapest (ruta N911)",G+"3HEKsY8tSdqJ4Qog9"]]}]},
+ "2026-12-08":{aloja:{nombre:"Wombat's City Hostel",zona:"barrio judío, distrito VII",url:G+"tCjH4yCRxZtLRHzC6"},
+   agenda:[{dia:"08/12",items:[["06:31","Llega a Budapest",G+"5SocG6dzCorrQ9om7"],["11:00","Free walking tour frente a la Basílica de San Esteban",G+"LkDtgDHhavHivphh6"]]},{dia:"09/12",items:[["","Día libre"]]},{dia:"10/12",items:[["23:05","Micro nocturno a Munich (ruta N965)",G+"5SocG6dzCorrQ9om7"]]}]},
+ "2026-12-11":{aloja:{nombre:"The 4 You Hostel",zona:"Maxvorstadt, cerca de la estación central",url:G+"MhRYxjQabABY2WX29"},
+   agenda:[{dia:"11/12",items:[["08:20","Llega a Munich",G+"5ykpC9fBrpprV1eH9"],["10:45","Free walking tour en Marienplatz",G+"3WZdcjfwr7dgJwFV8"]]},{dia:"12/12",items:[["08:45","Compra la entrada en Radius Tours",G+"guHxTGu4jDjtvvuT9"],["09:15","Excursión al castillo, hasta las 19:15",G+"XkhKtP2H7LyhNg3EA"]]},{dia:"13/12",items:[["20:25","Micro a Nuremberg (ruta N05)",G+"DiduvPpJ2i925UsF7"],["23:00","Llega a Nuremberg",G+"WTQg22cNhbSkWtMt7"]]}]},
+ "2026-12-14":{agenda:[{dia:"14/12",items:[["","Día libre"]]},{dia:"15/12",items:[["","Probablemente Rothenburg ob der Tauber",G+"BYRFrBy3uQA2Rsrg8"]]},{dia:"16/12",items:[["20:20","Micro nocturno a Bruselas",G+"WTQg22cNhbSkWtMt7"]]}]},
+ "2026-12-17":{aloja:{nombre:"Auberge de jeunesse Bruegel",zona:"centro, cerca de la Grand-Place",url:G+"fcMzPuSk9XBp143UA"},
+   agenda:[{dia:"17/12",items:[["07:20","Llega a Bruselas",G+"Bb9gwSjd9qdjD2tH7"],["11:00","Free walking tour frente a la torre del Ayuntamiento",G+"f58xhhJ4mgqHoFm26"]]}]},
+ "2026-12-18":{aloja:{nombre:"Auberge de jeunesse Bruegel",zona:"vuelve a dormir a Bruselas",url:G+"fcMzPuSk9XBp143UA"},
+   agenda:[{dia:"18/12",items:[["07:30","Micro desde Bruselas",G+"Bb9gwSjd9qdjD2tH7"],["09:15","Llega a Brujas",G+"5X1PodH3AerFNxpa6"],["10:30","Free walking tour en la Plaza Markt",G+"yutebK64gJvmrA3v9"],["20:25","Micro de vuelta",G+"5X1PodH3AerFNxpa6"],["22:15","De vuelta en Bruselas",G+"Bb9gwSjd9qdjD2tH7"]]}]},
+ "2026-12-19":{aloja:{nombre:"Kick Ass Greyfriars",zona:"Old Town, cerca de la Royal Mile",url:G+"MtUUVxGUM1dhYq1h7"},
+   agenda:[{dia:"19/12",items:[["06:00","Micro al aeropuerto de Bruselas",G+"eiG6wHFgSTrnu8Ba9"],["09:10","Vuelo de Ryanair a Edimburgo",G+"GboZ8mK8d8ytTiSs8"],["09:50","Llega a Edimburgo (una hora menos)",G+"ZvfLwC7zJSiiDd298"],["14:00","Free walking tour en la Royal Mile",G+"bBAJQ5V2AnAwQhnf7"],["18:30","Tour del lado oscuro de Edimburgo",G+"bBAJQ5V2AnAwQhnf7"]]},
+     {dia:"20/12",items:[["12:00","Pints of Knowledge en The Three Sisters",G+"ny8QTvQfvGt8ohQC9"],["15:30","Tour de Harry Potter",G+"bBAJQ5V2AnAwQhnf7"]]},{dia:"21/12-22/12",items:[["","Días libres"]]}]},
+ "2026-12-23":{aloja:{nombre:"Safestay York Micklegate",zona:"Micklegate, dentro de las murallas",url:G+"JSMH5rxvcEfrdzeo6"},
+   agenda:[{dia:"23/12",items:[["06:02","Tren CrossCountry desde Edimburgo",G+"DPNjtdW2FdsEVp969"],["08:38","Llega a York",G+"Jh6tete7sbbhwbVN9"]]},{dia:"24/12",items:[["","Nochebuena"]]},{dia:"25/12",items:[["","Navidad"]]}]},
+ "2026-12-26":{aloja:{nombre:"Generator London",zona:"Bloomsbury, cerca de King's Cross",url:G+"zRkyUu352CciDK7e6"},
+   agenda:[{dia:"26/12",items:[["08:00","Micro desde York (ruta UK014)",G+"YWjFJL3q82SeDu6T6"],["13:55","Llega a Londres, parada Finchley Road",G+"5EUgLpZH8JwDhQRc8"],["","Thameslink hasta King's Cross",G+"k6qkjQ9gYMPV5GLNA"]]},
+     {dia:"27/12-30/12",items:[["","Días libres"]]},{dia:"31/12",items:[["20:00","Fuegos artificiales de Año Nuevo, entrada por Victoria",G+"rjLZA1VWCHtxbsZ47"]]},{dia:"01/01",items:[["17:00","Harry Potter and the Cursed Child",G+"kYrXzZQJdxtqe26A7"]]},{dia:"02/01-03/01",items:[["","Días libres"]]}]},
+ "2027-01-04":{aloja:{nombre:"TOC Barcelona",zona:"Eixample",url:G+"3jtz4ZfujfntoNGEA"},
+   agenda:[{dia:"04/01",items:[["15:35","Vuelo desde el aeropuerto de Gatwick",G+"yxGMBV6NYdy9o4vs9"],["18:40","Llega a Barcelona",G+"BUM1pLae85bRrTvH8"]]},{dia:"05/01",items:[["","Sagrada Familia"]]}]},
+ "2027-01-06":{agenda:[{dia:"06/01",items:[["15:30","Vuelo a Bogotá desde Barcelona-El Prat",G+"BUM1pLae85bRrTvH8"],["20:25","Llega a Bogotá (hora de Colombia)"],["22:15","Vuelo de Bogotá a Córdoba"]]},{dia:"07/01",items:[["06:20","Llega a Córdoba"]]}]}
 };
 ITINERARIO.forEach(s=>Object.assign(s,DETALLES[s.start]||{}));
 
-/* Trayectos en micro o tren: la barra y el mapa muestran a Laura en camino. */
+/* Trayectos en micro, tren o avión: la barra y el mapa muestran a Laura en camino. */
 const TRAYECTOS = [
  {modo:"Micro",num:"476",from:"Frankfurt",to:"Heidelberg",dep:"2026-11-27T08:30:00+01:00",arr:"2026-11-27T09:30:00+01:00",a:[50.11,8.68],b:[49.41,8.69]},
  {modo:"Micro",num:"107",from:"Heidelberg",to:"Frankfurt",dep:"2026-11-27T21:40:00+01:00",arr:"2026-11-27T22:45:00+01:00",a:[49.41,8.69],b:[50.11,8.68]},
@@ -360,7 +380,17 @@ const TRAYECTOS = [
  {modo:"Micro",num:"N69",from:"Dresden",to:"Praga",dep:"2026-12-03T07:20:00+01:00",arr:"2026-12-03T09:10:00+01:00",a:[51.05,13.74],b:[50.08,14.42]},
  {modo:"Micro",num:"N1310",from:"Praga",to:"Cracovia",dep:"2026-12-05T00:50:00+01:00",arr:"2026-12-05T08:00:00+01:00",a:[50.08,14.42],b:[50.06,19.94]},
  {modo:"Micro",num:"N911",from:"Cracovia",to:"Budapest",dep:"2026-12-07T23:15:00+01:00",arr:"2026-12-08T06:31:00+01:00",a:[50.06,19.94],b:[47.50,19.04]},
- {modo:"Micro",num:"N965",from:"Budapest",to:"Munich",dep:"2026-12-10T23:05:00+01:00",arr:"2026-12-11T08:20:00+01:00",a:[47.50,19.04],b:[48.14,11.58]}
+ {modo:"Micro",num:"N965",from:"Budapest",to:"Munich",dep:"2026-12-10T23:05:00+01:00",arr:"2026-12-11T08:20:00+01:00",a:[47.50,19.04],b:[48.14,11.58]},
+ {modo:"Micro",num:"N05",from:"Munich",to:"Nuremberg",dep:"2026-12-13T20:25:00+01:00",arr:"2026-12-13T23:00:00+01:00",a:[48.14,11.58],b:[49.45,11.08]},
+ {modo:"Micro",num:"",from:"Nuremberg",to:"Bruselas",dep:"2026-12-16T20:20:00+01:00",arr:"2026-12-17T07:20:00+01:00",a:[49.45,11.08],b:[50.85,4.35]},
+ {modo:"Micro",num:"",from:"Bruselas",to:"Brujas",dep:"2026-12-18T07:30:00+01:00",arr:"2026-12-18T09:15:00+01:00",a:[50.85,4.35],b:[51.21,3.22]},
+ {modo:"Micro",num:"",from:"Brujas",to:"Bruselas",dep:"2026-12-18T20:25:00+01:00",arr:"2026-12-18T22:15:00+01:00",a:[51.21,3.22],b:[50.85,4.35]},
+ {modo:"Vuelo",num:"Ryanair",from:"Bruselas",to:"Edimburgo",dep:"2026-12-19T09:10:00+01:00",arr:"2026-12-19T09:50:00+00:00",a:[50.85,4.35],b:[55.95,-3.19],tz:"Europe/London"},
+ {modo:"Tren",num:"CrossCountry",from:"Edimburgo",to:"York",dep:"2026-12-23T06:02:00+00:00",arr:"2026-12-23T08:38:00+00:00",a:[55.95,-3.19],b:[53.96,-1.08],tz:"Europe/London"},
+ {modo:"Micro",num:"UK014",from:"York",to:"Londres",dep:"2026-12-26T08:00:00+00:00",arr:"2026-12-26T13:55:00+00:00",a:[53.96,-1.08],b:[51.51,-0.13],tz:"Europe/London"},
+ {modo:"Vuelo",num:"",from:"Londres",to:"Barcelona",dep:"2027-01-04T15:35:00+00:00",arr:"2027-01-04T18:40:00+01:00",a:[51.15,-0.18],b:[41.30,2.08],tz:"Europe/Madrid"},
+ {modo:"Vuelo",num:"",from:"Barcelona",to:"Bogotá",dep:"2027-01-06T15:30:00+01:00",arr:"2027-01-06T20:25:00-05:00",a:[41.30,2.08],b:[4.70,-74.14],tz:"America/Bogota"},
+ {modo:"Vuelo",num:"",from:"Bogotá",to:"Córdoba",dep:"2027-01-06T22:15:00-05:00",arr:"2027-01-07T06:20:00-03:00",a:[4.70,-74.14],b:[-31.31,-64.21],tz:"America/Argentina/Cordoba"}
 ];
 TRAYECTOS.forEach(v=>{v.depMs=Date.parse(v.dep);v.arrMs=Date.parse(v.arr)});
 const trayecto=t=>TRAYECTOS.find(v=>t>=v.depMs&&t<v.arrMs)||null;
@@ -378,7 +408,9 @@ const timeIn=(tz,d=now())=>fmt(tz,{hour:"2-digit",minute:"2-digit",hourCycle:"h2
 const dateIn=(tz,d=now())=>new Intl.DateTimeFormat("en-CA",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit"}).format(d);
 function offsetH(tz,d=now()){const s=new Intl.DateTimeFormat("en-US",{timeZone:tz,timeZoneName:"shortOffset"}).formatToParts(d).find(p=>p.type==="timeZoneName").value;const m=s.match(/GMT([+-]\d+)(?::(\d+))?/);return m?(+m[1]+(m[2]?Math.sign(+m[1])*m[2]/60:0)):0}
 const parseD=s=>{const[y,m,d]=s.split("-").map(Number);return Date.UTC(y,m-1,d)};
-const shortD=s=>{const[y,m,d]=s.split("-").map(Number);return `${pad(d)} ${MES[m-1]}`};
+const DIAS=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"],MESC=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+const shortD=s=>{const[y,m,d]=s.split("-").map(Number);return `${DIAS[new Date(Date.UTC(y,m-1,d)).getUTCDay()]} ${d} ${MESC[m-1]}`};
+const diaD=x=>x.split("-").map(p=>{const[d,m]=p.split("/").map(Number);return shortD(`${m<6?2027:2026}-${pad(m)}-${pad(d)}`)}).join(" a ");
 const roman=["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"];
 function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 
@@ -540,7 +572,7 @@ function CEL(type,rnd){
 
 /* ================== Vuelos ================== */
 const dur=ms=>{const m=Math.round(ms/6e4);return `${Math.floor(m/60)} h ${pad(m%60)} min`};
-const dayName=(tz,d)=>fmt(tz,{weekday:"short",day:"numeric",month:"short"}).format(d).replace(/\./g,"");
+const dayName=(tz,d)=>shortD(dateIn(tz,d));
 VUELOS.forEach(v=>{v.depMs=Date.parse(v.dep);v.arrMs=Date.parse(v.arr)});
 function flightHTML(v,i){
   const dd=new Date(v.depMs),ad=new Date(v.arrMs);
@@ -570,7 +602,7 @@ ITINERARIO.forEach((s,i)=>{
   const [s1,s2,far,mid,near,lit,ink]=s.sc.pal;
   const rnd=rng(i*97+13);
   const m=+s.start.slice(5,7);
-  const whenTxt=s.start===s.end?`${s.start.slice(8)} · ${roman[m-1]}`:`${s.start.slice(8)}–${s.end.slice(8)} · ${roman[+s.end.slice(5,7)-1]}`;
+  const whenTxt=s.start===s.end?shortD(s.start):`${shortD(s.start)} – ${shortD(s.end)}`;
   const el=document.createElement("article");
   el.className="stop";el.id=s.id;
   el.innerHTML=`
@@ -588,8 +620,8 @@ ITINERARIO.forEach((s,i)=>{
     <p class="country">${s.country} · ${shortD(s.start)}${s.end!==s.start?" → "+shortD(s.end):""} · ${days} ${days>1?"días":"día"}</p>
     <p class="desc">${s.desc}</p>
     ${s.note?`<p class="note">${s.note}</p>`:""}
-    ${s.aloja?`<dl class="stay"><dt>Duerme en</dt><dd>${s.aloja.nombre}<small>${s.aloja.zona}</small></dd></dl>`:""}
-    ${s.agenda?`<h3>Agenda</h3><div class="agenda">${s.agenda.map(g=>`<div><p class="ag-day">${g.dia}</p><ul class="ag-list">${g.items.map(([h,x])=>`<li><time>${h||"—"}</time><span>${x}</span></li>`).join("")}</ul></div>`).join("")}</div>`:""}
+    ${s.aloja?`<dl class="stay"><dt>Duerme en</dt><dd>${s.aloja.url?`<a href="${s.aloja.url}" target="_blank" rel="noopener">${s.aloja.nombre}<span class="ext"> · ver en el mapa ↗</span></a>`:s.aloja.nombre}<small>${s.aloja.zona}</small></dd></dl>`:""}
+    ${s.agenda?`<h3>Agenda</h3><div class="agenda">${s.agenda.map(g=>`<div><p class="ag-day">${diaD(g.dia)}</p><ul class="ag-list">${g.items.map(([h,x,u])=>`<li><time>${h||"—"}</time><span>${u?`<a href="${u}" target="_blank" rel="noopener">${x}<span class="ext"> · mapa ↗</span></a>`:x}</span></li>`).join("")}</ul></div>`).join("")}</div>`:""}
     <h3>Para no perderse</h3>
     <ul class="hl">${s.hl.map(h=>`<li>${h}</li>`).join("")}</ul>
     ${s.vuelos?`<h3>Vuelos</h3><div class="flights">${VUELOS.map(flightHTML).join("")}</div>`:""}
@@ -616,7 +648,7 @@ document.getElementById("stats").innerHTML=`<span><b>${totalDays}</b>días</span
 const routeEl=document.getElementById("route");
 ITINERARIO.forEach(s=>{
   const li=document.createElement("li");
-  li.innerHTML=`<a href="#${s.id}"><span class="rd">${shortD(s.start)}${s.end!==s.start?"–"+s.end.slice(8):""}</span><span class="rc">${s.city}</span><span class="rk">${s.country.split(" · ")[0]}</span></a>`;
+  li.innerHTML=`<a href="#${s.id}"><span class="rd">${shortD(s.start)}${s.end!==s.start?"<br>a "+shortD(s.end):""}</span><span class="rc">${s.city}</span><span class="rk">${s.country.split(" · ")[0]}</span></a>`;
   routeEl.appendChild(li);s.li=li;
 });
 
@@ -627,7 +659,7 @@ function currentIndex(d){
   return idx;
 }
 const startMs=Date.parse(SALIDA);
-const endMs=parseD(last.end)+DAY+3*3600e3;
+const endMs=TRAYECTOS[TRAYECTOS.length-1].arrMs;
 const $id=x=>document.getElementById(x);
 const bar={label:$id("barLabel"),main:$id("barMain"),sub:$id("barSub"),btn:$id("barBtn"),prog:$id("barProg")};
 let lastIdx=null,lastSunKey="";
@@ -643,7 +675,7 @@ function update(){
     let r=Math.max(0,startMs-t);const D=Math.floor(r/DAY);r-=D*DAY;const H=Math.floor(r/36e5);r-=H*36e5;const M=Math.floor(r/6e4);const S=Math.floor((r-M*6e4)/1e3);
     bar.label.textContent="Laura despega en";
     bar.main.innerHTML=`<span class="cd"><span>${D}<i>d</i></span><span>${pad(H)}<i>h</i></span><span>${pad(M)}<i>m</i></span><span>${pad(S)}<i>s</i></span></span>`;
-    bar.sub.textContent=`Sale de Córdoba el miércoles 25 a las ${timeIn(CORDOBA_TZ,new Date(startMs))} · ${VUELOS[0].num}`;
+    bar.sub.textContent=`Sale de Córdoba el Mié 25 Nov a las ${timeIn(CORDOBA_TZ,new Date(startMs))} · ${VUELOS[0].num}`;
     if(bar.btn.getAttribute("href")!=="#itinerario"){bar.btn.href="#itinerario";bar.btn.textContent="Ver recorrido"}
     bar.prog.style.width="0%";
   }else if(phase){
@@ -664,7 +696,7 @@ function update(){
     const v=trayecto(t),arr=new Date(v.arrMs);
     bar.label.textContent="Laura está viajando";
     bar.main.textContent=`${v.from} → ${v.to}`;
-    bar.sub.textContent=`${v.modo} ${v.num} · llega ${timeIn("Europe/Berlin",arr)} (${timeIn(CORDOBA_TZ,arr)} en Córdoba) · faltan ${dur(v.arrMs-t)}`;
+    bar.sub.textContent=`${v.modo}${v.num?" "+v.num:""} · llega ${timeIn(v.tz||"Europe/Berlin",arr)} (${timeIn(CORDOBA_TZ,arr)} en Córdoba) · faltan ${dur(v.arrMs-t)}`;
     const s=ITINERARIO[idx];
     if(s&&bar.btn.getAttribute("href")!=="#"+s.id){bar.btn.href="#"+s.id;bar.btn.textContent="Ver agenda"}
     bar.prog.style.width=Math.min(100,(t-startMs)/(endMs-startMs)*100).toFixed(1)+"%";
