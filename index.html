@@ -134,6 +134,18 @@ a{color:inherit}
 .ag-list{list-style:none;margin:0;padding:0 0 0 12px;border-left:2px solid var(--line);display:grid;gap:4px}
 .ag-list li{display:grid;grid-template-columns:3.4em 1fr;gap:8px}
 .ag-list time{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;color:var(--muted);padding-top:.15em}
+.car{margin:0 0 22px;position:relative}
+.car-track{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:0 calc(-1 * max(16px,env(safe-area-inset-right,0px))) 0 0;padding-right:16px;-webkit-overflow-scrolling:touch}
+.car-track::-webkit-scrollbar{display:none}
+.car-card{flex:0 0 82%;scroll-snap-align:start;margin:0;min-width:0}
+@media (min-width:700px){.car-card{flex-basis:46%}}
+.car-img{position:relative;aspect-ratio:4/3;max-width:100%;border-radius:6px;overflow:hidden;background:linear-gradient(160deg,var(--s1),var(--s2))}
+.car-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s}
+.car-img img.ok{opacity:1}
+.car-fb{position:absolute;left:12px;right:12px;bottom:10px;font-family:var(--display);font-weight:800;font-size:26px;line-height:1;text-transform:uppercase;color:var(--ink-s)}
+.car-card figcaption{display:flex;justify-content:space-between;gap:8px;padding-top:6px;font-size:14px}
+.car-card figcaption a{font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
+.car-count{position:absolute;top:8px;right:8px;z-index:1;font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:10px;background:color-mix(in srgb,var(--ink) 75%,transparent);color:var(--paper)}
 .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0;margin:0;border-top:1.5px dashed var(--line)}
 .facts>div{padding:12px 10px 4px 0;min-width:0}
 .facts dt{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
@@ -197,7 +209,7 @@ footer{max-width:760px;margin:0 auto;padding-block:40px 60px;font-family:var(--m
 <main id="stops"></main>
 
 <footer class="gut">
-  <p>Las ilustraciones son vectores hechos para esta página. El clima en vivo y el pronóstico (hasta dos semanas adelante) vienen de <a href="https://open-meteo.com/">Open-Meteo</a>; para fechas más lejanas se muestra el promedio típico del mes. Las horas de sol se calculan para la fecha de cada parada.</p>
+  <p>Las ilustraciones son vectores hechos para esta página. El clima en vivo y el pronóstico (hasta dos semanas adelante) vienen de <a href="https://open-meteo.com/">Open-Meteo</a>. Las fotos se cargan desde Wikipedia y Wikimedia Commons, con un enlace a cada fuente; para fechas más lejanas se muestra el promedio típico del mes. Las horas de sol se calculan para la fecha de cada parada.</p>
   <p>Para ver cómo se verá un día del viaje, agregá <code>#simular-2026-12-04</code> al final del enlace.</p>
 </footer>
 <button class="mm" id="mm" type="button" aria-label="Mapa del recorrido. Tocá para agrandar o achicar.">
@@ -394,6 +406,29 @@ const TRAYECTOS = [
 ];
 TRAYECTOS.forEach(v=>{v.depMs=Date.parse(v.dep);v.arrMs=Date.parse(v.arr)});
 const trayecto=t=>TRAYECTOS.find(v=>t>=v.depMs&&t<v.arrMs)||null;
+
+/* Carrusel de fotos: [nombre en la página, búsqueda en Wikipedia]. Una lista por parada, en orden. */
+const FOTOS = [
+ [["Catedral de Córdoba","Cathedral of Córdoba Argentina"],["Manzana Jesuítica","Jesuit Block and Estancias of Córdoba"],["Cabildo de Córdoba","Cabildo of Córdoba"],["Parque Sarmiento","Parque Sarmiento Córdoba"],["Sierras de Córdoba","Sierras de Córdoba"],["Aeropuerto de Madrid-Barajas","Madrid–Barajas Airport"]],
+ [["Römerberg","Römerberg"],["Catedral de Frankfurt","Frankfurt Cathedral"],["Puente de hierro","Eiserner Steg"],["Main Tower","Main Tower"],["Alte Oper","Alte Oper"],["Palmengarten","Palmengarten"]],
+ [["Castillo de Heidelberg","Heidelberg Castle"],["Puente Viejo","Alte Brücke Heidelberg"],["Camino de los Filósofos","Philosophenweg Heidelberg"],["Universidad de Heidelberg","Heidelberg University"],["Iglesia del Espíritu Santo","Church of the Holy Spirit Heidelberg"],["El barril gigante","Heidelberg Tun"]],
+ [["Catedral de Mainz","Mainz Cathedral"],["Museo Gutenberg","Gutenberg Museum"],["San Esteban y sus vitrales de Chagall","St. Stephan Mainz"],["Palacio Electoral","Electoral Palace Mainz"],["Puente Theodor Heuss","Theodor Heuss Bridge Mainz"],["Casco antiguo de Mainz","Mainz Altstadt"]],
+ [["Catedral de Estrasburgo","Strasbourg Cathedral"],["La Petite France","Petite France Strasbourg"],["Reloj astronómico","Strasbourg astronomical clock"],["Ponts Couverts","Ponts Couverts"],["Barrage Vauban","Barrage Vauban"],["Mercado navideño","Christkindelsmärik"]],
+ [["Museumsufer","Museumsufer"],["Kleinmarkthalle","Kleinmarkthalle"],["Sachsenhausen","Sachsenhausen Frankfurt"],["Museo Städel","Städel"],["Casa de Goethe","Goethe House Frankfurt"],["Estación central","Frankfurt Central Station"]],
+ [["Frauenkirche","Frauenkirche Dresden"],["Palacio Zwinger","Zwinger Dresden"],["Ópera Semper","Semperoper"],["Striezelmarkt","Striezelmarkt"],["Terraza de Brühl","Brühl's Terrace"],["Desfile de los Príncipes","Fürstenzug"]],
+ [["Puente de Carlos","Charles Bridge"],["Castillo de Praga","Prague Castle"],["Catedral de San Vito","St. Vitus Cathedral"],["Reloj astronómico","Prague astronomical clock"],["Iglesia de Týn","Church of Our Lady before Týn"],["Casa Danzante","Dancing House"]],
+ [["Plaza del Mercado","Main Square Kraków"],["Basílica de Santa María","St. Mary's Basilica Kraków"],["Lonja de los Paños","Cloth Hall Kraków"],["Castillo de Wawel","Wawel Castle"],["Kazimierz","Kazimierz"],["Barbacana","Kraków Barbican"]],
+ [["Parlamento","Hungarian Parliament Building"],["Puente de las Cadenas","Széchenyi Chain Bridge"],["Bastión de los Pescadores","Fisherman's Bastion"],["Baños Széchenyi","Széchenyi thermal bath"],["Basílica de San Esteban","St. Stephen's Basilica"],["Castillo de Buda","Buda Castle"]],
+ [["Marienplatz","Marienplatz"],["Frauenkirche","Frauenkirche Munich"],["Nuevo Ayuntamiento","New Town Hall Munich"],["Viktualienmarkt","Viktualienmarkt"],["Englischer Garten","English Garden Munich"],["Castillo de Neuschwanstein","Neuschwanstein Castle"]],
+ [["Castillo imperial","Nuremberg Castle"],["Christkindlesmarkt","Nuremberg Christkindlesmarkt"],["Fuente Hermosa","Schöner Brunnen"],["Iglesia de San Lorenzo","St. Lorenz Nuremberg"],["Casa de Durero","Albrecht Dürer's House"],["Rothenburg ob der Tauber","Rothenburg ob der Tauber"]],
+ [["Grand-Place","Grand-Place"],["Atomium","Atomium"],["Manneken Pis","Manneken Pis"],["Ayuntamiento","Brussels Town Hall"],["Galerías Saint-Hubert","Royal Saint-Hubert Galleries"],["Palacio Real","Royal Palace of Brussels"]],
+ [["Campanario","Belfry of Bruges"],["Plaza Markt","Markt Bruges"],["Rozenhoedkaai","Rozenhoedkaai"],["Lago del Amor","Minnewater"],["Iglesia de Nuestra Señora","Church of Our Lady Bruges"],["Plaza Burg","Burg Bruges"]],
+ [["Castillo de Edimburgo","Edinburgh Castle"],["Royal Mile","Royal Mile"],["Arthur's Seat","Arthur's Seat"],["Monumento a Walter Scott","Scott Monument"],["Calton Hill","Calton Hill"],["Victoria Street","Victoria Street Edinburgh"]],
+ [["York Minster","York Minster"],["The Shambles","The Shambles"],["Murallas de York","York city walls"],["Torre de Clifford","Clifford's Tower York"],["Museo Nacional del Ferrocarril","National Railway Museum"],["Río Ouse","River Ouse Yorkshire"]],
+ [["Big Ben","Big Ben"],["London Eye","London Eye"],["Tower Bridge","Tower Bridge"],["British Museum","British Museum"],["Palacio de Buckingham","Buckingham Palace"],["Estación de King's Cross","King's Cross railway station"]],
+ [["Sagrada Familia","Sagrada Família"],["Park Güell","Park Güell"],["Barrio Gótico","Gothic Quarter Barcelona"],["Casa Batlló","Casa Batlló"],["La Barceloneta","Barceloneta beach"],["La Rambla","La Rambla Barcelona"]],
+ [["Aeropuerto de Barcelona-El Prat","Barcelona–El Prat Airport"],["Aeropuerto El Dorado","El Dorado International Airport"],["Monserrate, Bogotá","Monserrate"],["La Candelaria, Bogotá","La Candelaria"],["Aeropuerto de Córdoba","Ingeniero Aeronáutico Ambrosio L.V. Taravella International Airport"],["Plaza San Martín, Córdoba","Plaza San Martín Córdoba Argentina"]]
+];
 
 /* ================== Utilidades ================== */
 const DAY=864e5;
@@ -624,6 +659,7 @@ ITINERARIO.forEach((s,i)=>{
     ${s.agenda?`<h3>Agenda</h3><div class="agenda">${s.agenda.map(g=>`<div><p class="ag-day">${diaD(g.dia)}</p><ul class="ag-list">${g.items.map(([h,x,u])=>`<li><time>${h||"—"}</time><span>${u?`<a href="${u}" target="_blank" rel="noopener">${x}<span class="ext"> · mapa ↗</span></a>`:x}</span></li>`).join("")}</ul></div>`).join("")}</div>`:""}
     <h3>Para no perderse</h3>
     <ul class="hl">${s.hl.map(h=>`<li>${h}</li>`).join("")}</ul>
+    ${FOTOS[i]?`<h3>En fotos</h3><div class="car" style="--s1:${s1};--s2:${s2};--ink-s:${ink}"><span class="car-count">1 / ${FOTOS[i].length}</span><div class="car-track">${FOTOS[i].map(([n,q])=>`<figure class="car-card" data-q="${q.replace(/"/g,"&quot;")}"><div class="car-img"><span class="car-fb">${n}</span></div><figcaption><span>${n}</span></figcaption></figure>`).join("")}</div></div>`:""}
     ${s.vuelos?`<h3>Vuelos</h3><div class="flights">${VUELOS.map(flightHTML).join("")}</div>`:""}
     <dl class="facts">
       <div><dt>Hora local</dt><dd data-clock>--:--</dd><small data-off></small></div>
@@ -785,6 +821,30 @@ async function loadWeather(){
 }
 if(!SIM)loadWeather();
 setInterval(()=>{if(!SIM)loadWeather()},30*60e3);
+
+/* ================== Carruseles de fotos (Wikipedia) ================== */
+async function wikiFoto(card){
+  const q=card.dataset.q;
+  try{
+    const url=`https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrsearch=${encodeURIComponent(q)}&gsrlimit=1&prop=pageimages|info&piprop=thumbnail&pithumbsize=800&inprop=url`;
+    const r=await fetch(url);if(!r.ok)return;
+    const pages=Object.values((await r.json()).query?.pages||{});const pg=pages[0];
+    if(!pg||!pg.thumbnail)return;
+    const img=new Image();img.alt=card.querySelector("figcaption span").textContent;img.loading="lazy";img.decoding="async";
+    img.onload=()=>{img.classList.add("ok");card.querySelector(".car-fb").hidden=true};
+    img.src=pg.thumbnail.source;card.querySelector(".car-img").appendChild(img);
+    const a=document.createElement("a");a.href=pg.fullurl;a.target="_blank";a.rel="noopener";a.textContent="Wikipedia ↗";
+    card.querySelector("figcaption").appendChild(a);
+  }catch(e){/* sin conexión o bloqueado: queda la tarjeta ilustrada */}
+}
+document.querySelectorAll(".car").forEach(car=>{
+  const track=car.querySelector(".car-track"),count=car.querySelector(".car-count"),cards=[...track.children];
+  track.addEventListener("scroll",()=>{const w=cards[0].offsetWidth+10;count.textContent=`${Math.min(cards.length,Math.round(track.scrollLeft/w)+1)} / ${cards.length}`},{passive:true});
+});
+if("IntersectionObserver" in window){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;io.unobserve(e.target);e.target.querySelectorAll(".car-card").forEach(wikiFoto)}),{rootMargin:"800px 0px"});
+  document.querySelectorAll(".car").forEach(c=>io.observe(c));
+}
 
 /* Si el viaje ya empezó, ir a donde está Laura */
 (function(){
